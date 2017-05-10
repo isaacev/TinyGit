@@ -1,5 +1,6 @@
 import { join } from 'path'
-import { mkdir } from 'fs'
+import { mkdir, readFile } from 'fs'
+import * as internals from './internals'
 
 export function init () {
   mkdir(join(process.cwd(), '.tinygit'), (err) => {
@@ -15,6 +16,13 @@ export function init () {
   })
 }
 
-export function hashObject () {
-  // TODO
+export function hashObject (filename) {
+  readFile(join(process.cwd(), filename), 'utf8', (err, data) => {
+    if (err != null) {
+      console.error('cannot read file %d', join(process.cwd(), filename))
+      process.exit(err.errno || 1)
+    } else {
+      console.log(internals.hashBlob(data))
+    }
+  })
 }
