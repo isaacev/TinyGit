@@ -9,4 +9,9 @@ program
   .description('Create an empty TinyGit repository')
   .action(commands.init)
 
+program
+  .command('hash-object')
+  .description('Compute an object ID and optionally create a blob from a file')
+  .action(commands.hashObject)
+
 program.parse(process.argv)

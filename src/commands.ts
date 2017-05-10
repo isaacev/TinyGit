@@ -14,3 +14,7 @@ export function init () {
     }
   })
 }
+
+export function hashObject () {
+  // TODO
+}
