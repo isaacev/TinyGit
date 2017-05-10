@@ -17,12 +17,12 @@ export class TinyBlob implements TinyObject {
     return this._contents.length
   }
 
-  contents (): string {
+  pretty (): string {
     return this._contents
   }
 
   encode (): string {
-    return format('blob %d\0%s', this.size(), this.contents())
+    return format('blob %d\0%s', this.size(), this.pretty())
   }
 
   hash (): string {
