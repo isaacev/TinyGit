@@ -12,6 +12,7 @@ program
 program
   .command('hash-object')
   .description('Compute an object ID and optionally create a blob from a file')
+  .option('--write', 'Write the object into the object database')
   .arguments('<file>')
   .action(commands.hashObject)
 

@@ -12,13 +12,21 @@ export function init () {
   })
 }
 
-export function hashObject (filename) {
+export function hashObject (filename, options) {
   readFile(join(process.cwd(), filename), 'utf8', (err, data) => {
     if (err != null) {
       console.error('cannot read file %s', join(process.cwd(), filename))
       process.exit(err.errno || 1)
     } else {
-      console.log(internals.hashBlob(data))
+      const hash = internals.hashBlob(data)
+
+      if (options.write === true) {
+        internals.writeObject(hash, data, () => {
+          console.log(hash)
+        })
+      } else {
+        console.log(hash)
+      }
     }
   })
 }
