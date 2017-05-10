@@ -1,9 +1,10 @@
 import { join } from 'path'
-import { existsSync, writeFile } from 'fs'
+import { existsSync, writeFile, readFile } from 'fs'
 import { format } from 'util'
 import sha1 = require('sha1')
 import * as mkdirp from 'mkdirp'
 
+type StringCallback = (err: NodeJS.ErrnoException, data?: string) => void
 type EmptyCallback = (err: NodeJS.ErrnoException) => void
 
 export function hashString (str: string): string {
@@ -32,6 +33,21 @@ export function writeObject (hash: string, data: string, done: EmptyCallback): v
         return void done(null)
       }
     })
+  })
+}
+
+export function readObject (hash: string, done: StringCallback): void {
+  exitIfRepoDoesNotExist()
+
+  const prefix = hash.substring(0, 2)
+  const suffix = hash.substring(2)
+
+  readFile(objectsFilepath(prefix, suffix), 'utf8', (err, data) => {
+    if (err != null) {
+      return void done(err)
+    } else {
+      return void done(null, data)
+    }
   })
 }
 
