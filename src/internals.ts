@@ -78,3 +78,13 @@ export function objectsDirpath (prefix: string): string {
 export function objectsFilepath (prefix: string, suffix: string): string {
   return join(objectsDirpath(prefix), suffix)
 }
+
+export function onlyOneIsTrue (...things: any[]): boolean {
+  return 1 === things.reduce((accum, thing) => {
+    if (thing === true) {
+      return ++accum
+    } else {
+      return accum
+    }
+  }, 0)
+}
