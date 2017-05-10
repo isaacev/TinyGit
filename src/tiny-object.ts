@@ -1,7 +1,8 @@
 export interface TinyObject {
-  type   (): string
-  size   (): number
-  pretty (): string
-  encode (): string
-  hash   (): string
+  type     (): string
+  size     (): number
+  contents (): string
+  encode   (): string
+  hash     (): string
+  pretty   (): string
 }
