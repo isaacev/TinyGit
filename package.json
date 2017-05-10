@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "description": "an implementation of basic Git functionality to test my understanding of Git interals",
   "scripts": {
+    "build": "tsc ./src/*.ts --outDir ./build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Isaac Evavold <ievavold@wisc.edu>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^7.0.18"
+  }
 }
