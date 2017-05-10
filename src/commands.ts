@@ -30,3 +30,34 @@ export function hashObject (filename, options) {
     }
   })
 }
+
+export function catFile (hash, options) {
+  if (false === internals.onlyOneIsTrue(options.type, options.size, options.exit, options.print)) {
+    options.help()
+    process.exit(1)
+    return
+  }
+
+  internals.readObject(hash, (err, obj) => {
+    if (err != null) {
+      console.error(err.code)
+      process.exit(err.errno || 1)
+      return
+    }
+
+    switch (true) {
+      case options.type:
+        console.log(obj.type())
+        break
+      case options.size:
+        console.log(obj.size())
+        break
+      case options.print:
+        console.log(obj.pretty())
+        break
+      case options.exit:
+        process.exit(1)
+        break
+    }
+  })
+}
