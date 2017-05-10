@@ -30,7 +30,7 @@ export class TinyBlob implements TinyObject {
   }
 
   pretty (): string {
-    return this._contents
+    return this.contents()
   }
 
   static decode (encoded: string): TinyBlob {
