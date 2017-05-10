@@ -15,11 +15,13 @@
   "license": "MIT",
   "devDependencies": {
     "@types/commander": "^2.9.0",
+    "@types/mkdirp": "^0.3.29",
     "@types/node": "^7.0.18",
     "@types/sha1": "^1.1.0"
   },
   "dependencies": {
     "commander": "^2.9.0",
+    "mkdirp": "^0.5.1",
     "sha1": "^1.1.1"
   }
 }
