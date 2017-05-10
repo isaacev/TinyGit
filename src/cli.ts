@@ -1,6 +1,6 @@
-function version () {
-  const pkg = require('../package.json')
-  console.log(pkg.version)
-}
+import * as program from 'commander'
 
-version()
+program
+  .version('0.1.0')
+
+program.parse(process.argv)

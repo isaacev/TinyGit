@@ -10,6 +10,10 @@
   "author": "Isaac Evavold <ievavold@wisc.edu>",
   "license": "MIT",
   "devDependencies": {
+    "@types/commander": "^2.9.0",
     "@types/node": "^7.0.18"
+  },
+  "dependencies": {
+    "commander": "^2.9.0"
   }
 }
