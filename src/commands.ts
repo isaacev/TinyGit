@@ -1,17 +1,13 @@
 import { join } from 'path'
-import { mkdir, readFile } from 'fs'
+import { readFile } from 'fs'
+import * as mkdirp from 'mkdirp'
 import * as internals from './internals'
 
 export function init () {
-  mkdir(join(process.cwd(), '.tinygit'), (err) => {
+  mkdirp(join(internals.repoDirpath(), 'objects'), (err) => {
     if (err != null) {
-      if (err.code === 'EEXIST') {
-        console.error('.tinygit directory already exists')
-      } else if (err.code) {
-        console.error(err.code)
-      }
-
-      process.exit(err.errno || 1);
+      console.log(err.code)
+      process.exit(err.errno || 1)
     }
   })
 }
