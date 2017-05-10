@@ -1,0 +1,10 @@
+{
+  "name": "tinygit",
+  "version": "0.1.0",
+  "description": "an implementation of basic Git functionality to test my understanding of Git interals",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Isaac Evavold <ievavold@wisc.edu>",
+  "license": "MIT"
+}
