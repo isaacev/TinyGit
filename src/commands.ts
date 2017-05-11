@@ -76,7 +76,7 @@ export function lsFiles () {
 }
 
 export function updateIndex (options) {
-  let pattern = /^(\d+) ([0-9a-f]{40}),(.+)$/i
+  let pattern = /^([0-9a-f]{40}),(.+)$/i
   let parsed = (options.cacheinfo || '').match(pattern)
 
   if (parsed === null) {
@@ -85,9 +85,8 @@ export function updateIndex (options) {
     return
   }
 
-  let mode = parsed[1]
-  let hash = parsed[2]
-  let name = parsed[3]
+  let hash = parsed[1]
+  let name = parsed[2]
 
   internals.readIndex((err, index) => {
     if (err != null) {
@@ -99,7 +98,7 @@ export function updateIndex (options) {
     index.remove(name)
 
     if (options.add === true) {
-      index.add(mode, name, hash)
+      index.add(name, hash)
     }
 
     internals.writeIndex(index, (err) => {

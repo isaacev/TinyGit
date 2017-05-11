@@ -12,8 +12,8 @@ export class TinyIndex {
     this._records = this._records.filter((record) => record.name() !== name)
   }
 
-  add (mode: number, name: string, hash: string): void {
-    this._records.push(new TinyTreeRecord(mode, name, hash))
+  add (name: string, hash: string): void {
+    this._records.push(new TinyTreeRecord(name, hash))
   }
 
   encode (): string {
@@ -24,7 +24,7 @@ export class TinyIndex {
 
   pretty (): string {
     return this._records.map((record) => {
-      return format('%d %s %s', record.mode(), record.hash(), record.name())
+      return format('%s %s', record.hash(), record.name())
     }).join('\n')
   }
 

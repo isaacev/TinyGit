@@ -32,7 +32,7 @@ program
 program
   .command('update-index')
   .option('--add')
-  .option('--cacheinfo <mode>,<object>,<path>')
+  .option('--cacheinfo <object>,<path>')
   .action(commands.updateIndex)
 
 program.parse(process.argv)

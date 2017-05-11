@@ -1,18 +1,12 @@
 import { format } from 'util'
 
 export class TinyTreeRecord {
-  private _mode: number
   private _name: string
   private _hash: string
 
-  constructor (mode: number, name: string, hash: string) {
-    this._mode = mode
+  constructor (name: string, hash: string) {
     this._name = name
     this._hash = hash
-  }
-
-  mode (): number {
-    return this._mode
   }
 
   name (): string {
@@ -24,11 +18,11 @@ export class TinyTreeRecord {
   }
 
   encode (): string {
-    return format('%d %s\0%s', this.mode(), this.name(), this.hash())
+    return format('%s\0%s', this.name(), this.hash())
   }
 
   static decode (encoded: string): TinyTreeRecord[] {
-    let pattern = /^(\d+) ([^\0]*)\0([0-9a-f]{40})/i
+    let pattern = /^([^\0]*)\0([0-9a-f]{40})/i
     let records: TinyTreeRecord[] = []
 
     let remaining = encoded
@@ -40,10 +34,9 @@ export class TinyTreeRecord {
       }
 
       remaining = remaining.substring(parsed[0].length)
-      let mode = parseInt(parsed[1], 10)
-      let name = parsed[2]
-      let hash = parsed[3]
-      records.push(new TinyTreeRecord(mode, name, hash))
+      let name = parsed[1]
+      let hash = parsed[2]
+      records.push(new TinyTreeRecord(name, hash))
 
       if (remaining.length === 0) {
         break
