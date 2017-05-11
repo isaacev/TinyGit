@@ -3,6 +3,7 @@ import { readFile } from 'fs'
 import * as mkdirp from 'mkdirp'
 import * as internals from './internals'
 import { TinyBlob } from './tiny-blob'
+import { TinyIndex } from './tiny-index'
 
 export function init () {
   mkdirp(join(internals.repoDirpath(), 'objects'), (err) => {
@@ -59,5 +60,41 @@ export function catFile (hash, options) {
         process.exit(1)
         break
     }
+  })
+}
+
+export function updateIndex (options) {
+  let pattern = /^(\d+) ([0-9a-f]{40}),(.+)$/i
+  let parsed = (options.cacheinfo || '').match(pattern)
+
+  if (parsed === null) {
+    options.help()
+    process.exit(1)
+    return
+  }
+
+  let mode = parsed[1]
+  let hash = parsed[2]
+  let name = parsed[3]
+
+  internals.readIndex((err, index) => {
+    if (err != null) {
+      console.error(err.code)
+      process.exit(err.errno || 1)
+      return
+    }
+
+    index.remove(name)
+
+    if (options.add === true) {
+      index.add(mode, name, hash)
+    }
+
+    internals.writeIndex(index, (err) => {
+      if (err != null) {
+        console.error(err.code)
+        process.exit(err.errno || 1)
+      }
+    })
   })
 }

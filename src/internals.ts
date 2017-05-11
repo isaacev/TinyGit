@@ -3,9 +3,11 @@ import { existsSync, writeFile, readFile } from 'fs'
 import { format } from 'util'
 import sha1 = require('sha1')
 import * as mkdirp from 'mkdirp'
+import { TinyIndex } from './tiny-index'
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
 
+type IndexCallback  = (err: NodeJS.ErrnoException, index?: TinyIndex) => void
 type ObjectCallback = (err: NodeJS.ErrnoException, obj?: TinyObject) => void
 
 export function hashString (str: string): string {
@@ -57,6 +59,34 @@ export function readObject (hash: string, done: ObjectCallback): void {
   })
 }
 
+export function writeIndex (index: TinyIndex, done: IndexCallback): void {
+  exitIfRepoDoesNotExist()
+
+  writeFile(indexFilepath(), index.encode(), (err) => {
+    if (err != null) {
+      return void done(err)
+    } else {
+      return void done(null, index)
+    }
+  })
+}
+
+export function readIndex (done: IndexCallback): void {
+  exitIfRepoDoesNotExist()
+
+  readFile(indexFilepath(), 'utf8', (err, raw) => {
+    if (err != null) {
+      if (err.code === 'ENOENT') {
+        return void done(null, new TinyIndex([]))
+      } else {
+        return void done(err)
+      }
+    } else {
+      return void done(null, TinyIndex.decode(raw))
+    }
+  })
+}
+
 export function exitIfRepoDoesNotExist (): boolean {
   if (false === existsSync(repoDirpath())) {
     console.error('Not a TinyGit repository')
@@ -69,6 +99,10 @@ export function exitIfRepoDoesNotExist (): boolean {
 
 export function repoDirpath (): string {
   return join(process.cwd(), '.tinygit')
+}
+
+export function indexFilepath (): string {
+  return join(repoDirpath(), 'index')
 }
 
 export function objectsDirpath (prefix: string): string {

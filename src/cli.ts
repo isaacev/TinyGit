@@ -25,4 +25,10 @@ program
   .arguments('<object>')
   .action(commands.catFile)
 
+program
+  .command('update-index')
+  .option('--add')
+  .option('--cacheinfo <mode>,<object>,<path>')
+  .action(commands.updateIndex)
+
 program.parse(process.argv)
