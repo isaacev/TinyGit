@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join, normalize } from 'path'
 import { readFile } from 'fs'
 import * as mkdirp from 'mkdirp'
 import * as internals from './internals'
@@ -81,6 +81,7 @@ export function updateIndex (hash: string, name: string, mode: UpdateIndexMode, 
       return void done(new Error(err.code))
     }
 
+    name = normalize(name)
     index.remove(name)
 
     if (mode === UpdateIndexMode.Add) {
