@@ -1,4 +1,4 @@
-import { writeFile, readFile } from 'fs'
+import { writeFile, writeFileSync, readFile } from 'fs'
 import * as mkdirp from 'mkdirp'
 import { TinyIndex } from './tiny-index'
 import { TinyObject } from './tiny-object'
@@ -28,6 +28,18 @@ export function writeObject (obj: TinyObject, done: ObjectCallback): void {
       }
     })
   })
+}
+
+export function writeObjectSync (obj: TinyObject): TinyObject {
+  util.exitIfRepoDoesNotExist()
+
+  const hash   = obj.hash()
+  const prefix = hash.substring(0, 2)
+  const suffix = hash.substring(2)
+
+  mkdirp.sync(util.objectsDirpath(prefix))
+  writeFileSync(util.objectsFilepath(prefix, suffix), obj.encode())
+  return obj
 }
 
 export function readObject (hash: string, done: ObjectCallback): void {

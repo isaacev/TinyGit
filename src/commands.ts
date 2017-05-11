@@ -1,4 +1,4 @@
-import { join, normalize } from 'path'
+import { join, sep, normalize } from 'path'
 import { readFile } from 'fs'
 import * as mkdirp from 'mkdirp'
 import * as internals from './internals'
@@ -95,5 +95,26 @@ export function updateIndex (hash: string, name: string, mode: UpdateIndexMode, 
         return void done(null)
       }
     })
+  })
+}
+
+export type WriteTreeCallback = (err: Error, hash?: string) => void
+export function writeTree (prefix: string, missingOk: boolean, done: WriteTreeCallback): void {
+  internals.readIndex((err, index) => {
+    if (err) {
+      return void done(new Error(err.code))
+    }
+
+    prefix = normalize(prefix)
+
+    if (prefix !== '.') {
+      prefix = prefix.split(sep).filter(s => s.length > 1).join(sep)
+    }
+
+    try {
+      return void done(null, index.writeTree(prefix, missingOk))
+    } catch (err) {
+      return void done(err.code)
+    }
   })
 }

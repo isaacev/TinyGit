@@ -118,4 +118,21 @@ program
     }
   })
 
+program
+  .command('write-tree')
+  .option('--prefix <prefix>')
+  .option('--missing-ok')
+  .action((options) => {
+    let prefix = (typeof options.prefix !== 'string') ? '' : options.prefix
+    let missingOk = (options.missingOk === true)
+
+    commands.writeTree(prefix, missingOk, (err, hash) => {
+      if (err) {
+        console.error(err.message)
+      } else {
+        console.log(hash)
+      }
+    })
+  })
+
 program.parse(process.argv)

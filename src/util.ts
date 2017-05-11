@@ -1,12 +1,15 @@
-import { join } from 'path'
+import { join, parse, sep } from 'path'
 import { existsSync, readdir } from 'fs'
 import sha1 = require('sha1')
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
+import { TinyTree, TinyTreeRecord } from './tiny-tree'
 
 export function decodeObject (raw: string): TinyObject {
   if (raw.match(/^blob \d+\0/)) {
     return TinyBlob.decode(raw)
+  } else if (raw.match(/^tree \d+\0/)) {
+    return TinyTree.decode(raw)
   } else {
     throw new Error('cannot decode object')
   }
@@ -94,4 +97,42 @@ export function onlyOneIsTrue (...things: any[]): boolean {
       return accum
     }
   }, 0)
+}
+
+export function computeChildrenOfPrefix (prefix: string, records: TinyTreeRecord[]): { files: TinyTreeRecord[], dirs: string[] } {
+  return records.reduce((accum, record) => {
+    let dir = parse(record.name()).dir
+    let prefixDirs = prefix.split(sep)
+    let dirs = dir.split(sep)
+
+    if (prefix === '.') {
+      if (dir === '') {
+        accum.files.push(record)
+      } else {
+        if (accum.dirs.indexOf(dirs[0]) === -1) {
+          accum.dirs.push(dirs[0])
+        }
+      }
+    } else if (dir === prefix) {
+      accum.files.push(record)
+    } else {
+      for (let i = 0; i < dirs.length; i++) {
+        if (i < prefixDirs.length) {
+          if (prefixDirs[i] !== dirs[i]) {
+            break
+          }
+        } else if (i === prefixDirs.length) {
+          let childDir = prefixDirs.concat(dirs[i]).join(sep)
+
+          if (accum.dirs.indexOf(dirs[i]) === -1) {
+            accum.dirs.push(childDir)
+          }
+
+          break
+        }
+      }
+    }
+
+    return accum
+  }, { files: [] as TinyTreeRecord[], dirs: [] as string[] })
 }
