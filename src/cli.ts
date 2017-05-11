@@ -42,24 +42,30 @@ program
     let showPretty = (options.print === true)
     let exit       = (options.exit === true)
 
-    if (util.isLegalHash(hash) && util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
-      let mode: commands.CatFileMode
-
-      if (showType) {
-        mode = commands.CatFileMode.Type
-      } else if (showSize) {
-        mode = commands.CatFileMode.Size
-      } else if (showPretty) {
-        mode = commands.CatFileMode.Pretty
-      } else {
-        mode = commands.CatFileMode.Exit
-      }
-
-      commands.catFile(hash, mode, (err, output) => {
+    if (util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
+      util.mapShortHashToFullHash(hash, (err, hash) => {
         if (err) {
           console.error(err.message)
         } else {
-          console.log(output)
+          let mode: commands.CatFileMode
+
+          if (showType) {
+            mode = commands.CatFileMode.Type
+          } else if (showSize) {
+            mode = commands.CatFileMode.Size
+          } else if (showPretty) {
+            mode = commands.CatFileMode.Pretty
+          } else {
+            mode = commands.CatFileMode.Exit
+          }
+
+          commands.catFile(hash, mode, (err, output) => {
+            if (err) {
+              console.error(err.message)
+            } else {
+              console.log(output)
+            }
+          })
         }
       })
     } else {
@@ -87,11 +93,17 @@ program
     let removeIsMissing = options.remove === undefined
 
     if (util.isLegalHash(options.add || '') && removeIsMissing) {
-      let hash = options.add
-      let mode = commands.UpdateIndexMode.Add
-      commands.updateIndex(hash, name, mode, (err) => {
+      util.mapShortHashToFullHash(options.add, (err, hash) => {
         if (err) {
           console.error(err.message)
+        } else {
+          let mode = commands.UpdateIndexMode.Add
+
+          commands.updateIndex(hash, name, mode, (err) => {
+            if (err) {
+              console.error(err.message)
+            }
+          })
         }
       })
     } else if (addIsMissing && options.remove === true) {
