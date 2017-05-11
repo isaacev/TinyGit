@@ -34,7 +34,7 @@ export class TinyBlob implements TinyObject {
   }
 
   static decode (encoded: string): TinyBlob {
-    let pattern = /^blob \d+\0(.*)$/
+    let pattern = /^blob \d+\0((.|[\r\n])*)$/
     let parsed = encoded.match(pattern)
 
     if (parsed === null) {
