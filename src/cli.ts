@@ -79,27 +79,24 @@ program
 
 program
   .command('update-index')
-  .option('--add')
-  .option('--path <path>')
-  .action((options) => {
-    let pattern = /^([0-9a-f]{40}),(.*)$/i
-    let add     = (options.add === true)
-    let remove  = (options.remove === true)
+  .option('--add <object>')
+  .option('--remove')
+  .arguments('<path>')
+  .action((name, options) => {
+    let addIsMissing    = options.add === undefined
+    let removeIsMissing = options.remove === undefined
 
-    if (util.onlyOneIsTrue(add, remove) && pattern.test(options.cacheinfo || '')) {
-      let mode: commands.UpdateIndexMode
-
-      if (add) {
-        mode = commands.UpdateIndexMode.Add
-      } else {
-        mode = commands.UpdateIndexMode.Remove
-      }
-
-      let parsed = options.cacheinfo.match(pattern)
-      let hash = parsed[1]
-      let name = parsed[2]
-
+    if (/[0-9a-f]{40}/i.test(options.add || '') && removeIsMissing) {
+      let hash = options.add
+      let mode = commands.UpdateIndexMode.Add
       commands.updateIndex(hash, name, mode, (err) => {
+        if (err) {
+          console.error(err.message)
+        }
+      })
+    } else if (addIsMissing && options.remove === true) {
+      let mode = commands.UpdateIndexMode.Remove
+      commands.updateIndex(null, name, mode, (err) => {
         if (err) {
           console.error(err.message)
         }
