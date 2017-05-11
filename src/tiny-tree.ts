@@ -29,6 +29,10 @@ export class TinyTreeRecord {
 
     let remaining = encoded
     while (true) {
+      if (remaining.length === 0) {
+        break
+      }
+
       let parsed = remaining.match(pattern)
 
       if (parsed === null) {
@@ -39,10 +43,6 @@ export class TinyTreeRecord {
       let name = parsed[1]
       let hash = parsed[2]
       records.push(new TinyTreeRecord(name, hash))
-
-      if (remaining.length === 0) {
-        break
-      }
     }
 
     return records
