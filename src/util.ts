@@ -16,6 +16,18 @@ export function hashString (str: string): string {
   return String(sha1(str))
 }
 
+export function isShortHash (candidate: string): boolean {
+  return /^[0-9a-f]{4}$/i.test(candidate)
+}
+
+export function isFullHash (candidate: string): boolean {
+  return /^[0-9a-f]{40}$/i.test(candidate)
+}
+
+export function isLegalHash (candidate: string): boolean {
+  return isFullHash(candidate)
+}
+
 export function exitIfRepoDoesNotExist (): boolean {
   if (false === existsSync(repoDirpath())) {
     console.error('Not a TinyGit repository')

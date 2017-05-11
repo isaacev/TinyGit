@@ -42,7 +42,7 @@ program
     let showPretty = (options.print === true)
     let exit       = (options.exit === true)
 
-    if (util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
+    if (util.isLegalHash(hash) && util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
       let mode: commands.CatFileMode
 
       if (showType) {
@@ -86,7 +86,7 @@ program
     let addIsMissing    = options.add === undefined
     let removeIsMissing = options.remove === undefined
 
-    if (/[0-9a-f]{40}/i.test(options.add || '') && removeIsMissing) {
+    if (util.isLegalHash(options.add || '') && removeIsMissing) {
       let hash = options.add
       let mode = commands.UpdateIndexMode.Add
       commands.updateIndex(hash, name, mode, (err) => {
