@@ -26,6 +26,10 @@ program
   .action(commands.catFile)
 
 program
+  .command('ls-files')
+  .action(commands.lsFiles)
+
+program
   .command('update-index')
   .option('--add')
   .option('--cacheinfo <mode>,<object>,<path>')

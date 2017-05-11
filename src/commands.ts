@@ -63,6 +63,18 @@ export function catFile (hash, options) {
   })
 }
 
+export function lsFiles () {
+  internals.readIndex((err, index) => {
+    if (err != null) {
+      console.error(err.code)
+      process.exit(err.errno || 1)
+      return
+    }
+
+    console.log(index.pretty())
+  })
+}
+
 export function updateIndex (options) {
   let pattern = /^(\d+) ([0-9a-f]{40}),(.+)$/i
   let parsed = (options.cacheinfo || '').match(pattern)
