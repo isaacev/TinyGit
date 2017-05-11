@@ -6,106 +6,92 @@ import * as util from './util'
 import { TinyBlob } from './tiny-blob'
 import { TinyIndex } from './tiny-index'
 
-export function init () {
+export type InitCallback = (err: Error) => void
+export function init (done: InitCallback) {
   mkdirp(join(util.repoDirpath(), 'objects'), (err) => {
     if (err != null) {
-      console.log(err.code)
-      process.exit(err.errno || 1)
+      return void done(new Error(err.code))
+    } else {
+      return void done(null)
     }
   })
 }
 
-export function hashObject (filename, options) {
+export type HashObjectCallback = (err: Error, hash?: string) => void
+export function hashObject (filename: string, write: boolean, done: HashObjectCallback): void {
   readFile(join(process.cwd(), filename), 'utf8', (err, contents) => {
     if (err != null) {
-      console.error('cannot read file %s', join(process.cwd(), filename))
-      process.exit(err.errno || 1)
+      return void done(new Error(err.code))
     } else {
       const blob = new TinyBlob(contents)
-      if (options.write === true) {
+      if (write === true) {
         internals.writeObject(blob, (err, obj) => {
-          console.log(obj.hash())
+          if (err != null) {
+            return void done(new Error(err.code))
+          } else {
+            return void done(null, obj.hash())
+          }
         })
       } else {
-        console.log(blob.hash())
+        return void done(null, blob.hash())
       }
     }
   })
 }
 
-export function catFile (hash, options) {
-  if (false === util.onlyOneIsTrue(options.type, options.size, options.exit, options.print)) {
-    options.help()
-    process.exit(1)
-    return
-  }
-
+export type CatFileCallback = (err: Error, stdout?: string) => void
+export enum CatFileMode { Type, Size, Pretty, Exit }
+export function catFile (hash: string, mode: CatFileMode, done: CatFileCallback) {
   internals.readObject(hash, (err, obj) => {
     if (err != null) {
-      console.error(err.code)
-      process.exit(err.errno || 1)
-      return
+      return void done(new Error(err.code))
     }
 
-    switch (true) {
-      case options.type:
-        console.log(obj.type())
-        break
-      case options.size:
-        console.log(obj.size())
-        break
-      case options.print:
-        console.log(obj.pretty())
-        break
-      case options.exit:
-        process.exit(1)
-        break
+    switch (mode) {
+      case CatFileMode.Type:
+        return void done(null, obj.type())
+      case CatFileMode.Size:
+        return void done(null, obj.size().toString())
+      case CatFileMode.Pretty:
+        return void done(null, obj.pretty())
+      case CatFileMode.Exit:
+        return void done(null)
+      default:
+        return void done(new Error('unknown mode'))
     }
   })
 }
 
-export function lsFiles () {
+export type LsFilesCallback = (err: Error, output?: string) => void
+export function lsFiles (done: LsFilesCallback) {
   internals.readIndex((err, index) => {
     if (err != null) {
-      console.error(err.code)
-      process.exit(err.errno || 1)
-      return
+      return void done(new Error(err.code))
+    } else {
+      return void done(null, index.pretty())
     }
-
-    console.log(index.pretty())
   })
 }
 
-export function updateIndex (options) {
-  let pattern = /^([0-9a-f]{40}),(.+)$/i
-  let parsed = (options.cacheinfo || '').match(pattern)
-
-  if (parsed === null) {
-    options.help()
-    process.exit(1)
-    return
-  }
-
-  let hash = parsed[1]
-  let name = parsed[2]
-
+export type UpdateIndexCallback = (err: Error) => void
+export enum UpdateIndexMode { Add, Remove }
+export function updateIndex (hash: string, name: string, mode: UpdateIndexMode, done: UpdateIndexCallback) {
   internals.readIndex((err, index) => {
     if (err != null) {
-      console.error(err.code)
-      process.exit(err.errno || 1)
-      return
+      return void done(new Error(err.code))
     }
 
     index.remove(name)
 
-    if (options.add === true) {
+    if (mode === UpdateIndexMode.Add) {
       index.add(name, hash)
     }
 
     internals.writeIndex(index, (err) => {
       if (err != null) {
-        console.error(err.code)
-        process.exit(err.errno || 1)
+        return void done(new Error(err.code))
+      } else {
+        return void done(null)
       }
     })
   })
