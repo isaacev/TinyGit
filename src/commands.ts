@@ -2,11 +2,12 @@ import { join } from 'path'
 import { readFile } from 'fs'
 import * as mkdirp from 'mkdirp'
 import * as internals from './internals'
+import * as util from './util'
 import { TinyBlob } from './tiny-blob'
 import { TinyIndex } from './tiny-index'
 
 export function init () {
-  mkdirp(join(internals.repoDirpath(), 'objects'), (err) => {
+  mkdirp(join(util.repoDirpath(), 'objects'), (err) => {
     if (err != null) {
       console.log(err.code)
       process.exit(err.errno || 1)
@@ -33,7 +34,7 @@ export function hashObject (filename, options) {
 }
 
 export function catFile (hash, options) {
-  if (false === internals.onlyOneIsTrue(options.type, options.size, options.exit, options.print)) {
+  if (false === util.onlyOneIsTrue(options.type, options.size, options.exit, options.print)) {
     options.help()
     process.exit(1)
     return

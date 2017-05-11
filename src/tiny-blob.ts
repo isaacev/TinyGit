@@ -1,5 +1,5 @@
 import { format } from 'util'
-import { hashString } from './internals'
+import { hashString } from './util'
 import { TinyObject } from './tiny-object'
 
 export class TinyBlob implements TinyObject {
