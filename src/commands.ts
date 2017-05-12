@@ -1,5 +1,6 @@
+import { format } from 'util'
 import { join, sep, normalize } from 'path'
-import { readFile } from 'fs'
+import { readFile, readFileSync } from 'fs'
 import * as mkdirp from 'mkdirp'
 import * as internals from './internals'
 import * as util from './util'
@@ -8,13 +9,11 @@ import { TinyIndex } from './tiny-index'
 
 export type InitCallback = (err: Error) => void
 export function init (done: InitCallback) {
-  mkdirp(join(util.repoDirpath(), 'objects'), (err) => {
-    if (err != null) {
-      return void done(new Error(err.code))
-    } else {
-      return void done(null)
-    }
-  })
+  try {
+    mkdirp.sync(join(util.repoDirpath(), 'objects'))
+  } catch (err) {
+    throw new Error('failed to initialize repository')
+  }
 }
 
 export type HashObjectCallback = (err: Error, hash?: string) => void
@@ -37,6 +36,23 @@ export function hashObject (filename: string, write: boolean, done: HashObjectCa
       }
     }
   })
+}
+
+export function hashObjectSync (filename: string, write: boolean): string {
+  let contents = ''
+  try {
+    contents = readFileSync(join(process.cwd(), filename), 'utf8')
+  } catch (err) {
+    throw new Error(format('failed to read `%s`', filename))
+  }
+
+  const blob = new TinyBlob(contents)
+
+  if (write) {
+    internals.writeObjectSync(blob)
+  }
+
+  return blob.hash()
 }
 
 export type CatFileCallback = (err: Error, stdout?: string) => void
@@ -62,6 +78,21 @@ export function catFile (hash: string, mode: CatFileMode, done: CatFileCallback)
   })
 }
 
+export function catFileSync (hash: string, mode: CatFileMode): string {
+  let obj = internals.readObjectSync(hash)
+
+  switch (mode) {
+    case CatFileMode.Type:
+      return obj.type()
+    case CatFileMode.Size:
+      return obj.size().toString()
+    case CatFileMode.Pretty:
+      return obj.pretty()
+    default:
+      return ''
+  }
+}
+
 export type LsFilesCallback = (err: Error, output?: string) => void
 export function lsFiles (done: LsFilesCallback) {
   internals.readIndex((err, index) => {
@@ -71,6 +102,10 @@ export function lsFiles (done: LsFilesCallback) {
       return void done(null, index.pretty())
     }
   })
+}
+
+export function lsFilesSync (): string {
+  return internals.readIndexSync().pretty()
 }
 
 export type UpdateIndexCallback = (err: Error) => void
@@ -98,6 +133,19 @@ export function updateIndex (hash: string, name: string, mode: UpdateIndexMode, 
   })
 }
 
+export function updateIndexSync (hash: string, name: string, mode: UpdateIndexMode): void {
+  const index = internals.readIndexSync()
+  name = normalize(name)
+
+  index.remove(name)
+
+  if (mode === UpdateIndexMode.Add) {
+    index.add(name, hash)
+  }
+
+  internals.writeIndexSync(index)
+}
+
 export type WriteTreeCallback = (err: Error, hash?: string) => void
 export function writeTree (prefix: string, missingOk: boolean, done: WriteTreeCallback): void {
   internals.readIndex((err, index) => {
@@ -117,4 +165,15 @@ export function writeTree (prefix: string, missingOk: boolean, done: WriteTreeCa
       return void done(err.code)
     }
   })
+}
+
+export function writeTreeSync (prefix: string, missingOk: boolean): string {
+  const index = internals.readIndexSync()
+  prefix = normalize(prefix)
+
+  if (prefix !== '.') {
+    prefix = prefix.split(sep).filter(s => s.length > 1).join(sep)
+  }
+
+  return index.writeTree(prefix, missingOk)
 }

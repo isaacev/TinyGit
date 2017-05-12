@@ -1,5 +1,5 @@
 import { join, parse, sep } from 'path'
-import { existsSync, readdir } from 'fs'
+import { existsSync, readdir, readdirSync } from 'fs'
 import sha1 = require('sha1')
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
@@ -61,6 +61,23 @@ export function mapShortHashToFullHash (candidate: string, done: (err: Error, ha
       }
     }
   })
+}
+
+export function mapShortHashToFullHashSync (candidate: string): string {
+  const prefix    = candidate.substring(0, 2)
+  const suffix    = candidate.substring(2, 4)
+  const dirpath   = objectsDirpath(prefix)
+  const filenames = readdirSync(dirpath)
+
+  for (let i = 0; i < filenames.length; i++) {
+    const filename = filenames[i]
+
+    if (filename.substring(0, 2) === suffix) {
+      return prefix + filename;
+    }
+  }
+
+  throw new Error('invalid object ID')
 }
 
 export function exitIfRepoDoesNotExist (): boolean {

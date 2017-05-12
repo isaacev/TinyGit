@@ -18,13 +18,9 @@ program
   .option('--write')
   .arguments('<file>')
   .action((filename, options) => {
-    commands.hashObject(filename, options.write === true, (err, hash) => {
-      if (err) {
-        console.error(err.message)
-      } else {
-        console.log(hash)
-      }
-    })
+    const write = (options.write === true)
+    const hash = commands.hashObjectSync(filename, write)
+    console.log(hash)
   })
 
 program
@@ -35,37 +31,28 @@ program
   .option('--print')
   .arguments('<object>')
   .action((hash, options) => {
-    let showType   = (options.type === true)
-    let showSize   = (options.size === true)
-    let showPretty = (options.print === true)
-    let exit       = (options.exit === true)
+    const showType   = (options.type === true)
+    const showSize   = (options.size === true)
+    const showPretty = (options.print === true)
+    const exit       = (options.exit === true)
 
     if (util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
-      util.mapShortHashToFullHash(hash, (err, hash) => {
-        if (err) {
-          console.error(err.message)
-        } else {
-          let mode: commands.CatFileMode
+      hash = util.mapShortHashToFullHashSync(hash)
 
-          if (showType) {
-            mode = commands.CatFileMode.Type
-          } else if (showSize) {
-            mode = commands.CatFileMode.Size
-          } else if (showPretty) {
-            mode = commands.CatFileMode.Pretty
-          } else {
-            mode = commands.CatFileMode.Exit
-          }
+      let mode: commands.CatFileMode
 
-          commands.catFile(hash, mode, (err, output) => {
-            if (err) {
-              console.error(err.message)
-            } else {
-              console.log(output)
-            }
-          })
-        }
-      })
+      if (showType) {
+        mode = commands.CatFileMode.Type
+      } else if (showSize) {
+        mode = commands.CatFileMode.Size
+      } else if (showPretty) {
+        mode = commands.CatFileMode.Pretty
+      } else {
+        mode = commands.CatFileMode.Exit
+      }
+
+      const output = commands.catFileSync(hash, mode)
+      console.log(output)
     } else {
       options.help()
     }
@@ -73,13 +60,10 @@ program
 
 program
   .command('ls-files')
-  .action(commands.lsFiles.bind(null, (err, output) => {
-    if (err) {
-      console.error(err.message)
-    } else {
-      console.log(output)
-    }
-  }))
+  .action(() => {
+    const output = commands.lsFilesSync()
+    console.log(output)
+  })
 
 program
   .command('update-index')
@@ -87,30 +71,16 @@ program
   .option('--remove')
   .arguments('<path>')
   .action((name, options) => {
-    let addIsMissing    = options.add === undefined
-    let removeIsMissing = options.remove === undefined
+    const addIsMissing    = options.add === undefined
+    const removeIsMissing = options.remove === undefined
 
     if (util.isLegalHash(options.add || '') && removeIsMissing) {
-      util.mapShortHashToFullHash(options.add, (err, hash) => {
-        if (err) {
-          console.error(err.message)
-        } else {
-          let mode = commands.UpdateIndexMode.Add
-
-          commands.updateIndex(hash, name, mode, (err) => {
-            if (err) {
-              console.error(err.message)
-            }
-          })
-        }
-      })
+      const hash = util.mapShortHashToFullHashSync(options.add)
+      const mode = commands.UpdateIndexMode.Add
+      commands.updateIndexSync(hash, name, mode)
     } else if (addIsMissing && options.remove === true) {
-      let mode = commands.UpdateIndexMode.Remove
-      commands.updateIndex(null, name, mode, (err) => {
-        if (err) {
-          console.error(err.message)
-        }
-      })
+      const mode = commands.UpdateIndexMode.Remove
+      commands.updateIndexSync(null, name, mode)
     } else {
       options.help()
     }
@@ -121,46 +91,27 @@ program
   .option('--prefix <prefix>')
   .option('--missing-ok')
   .action((options) => {
-    let prefix = (typeof options.prefix !== 'string') ? '' : options.prefix
-    let missingOk = (options.missingOk === true)
-
-    commands.writeTree(prefix, missingOk, (err, hash) => {
-      if (err) {
-        console.error(err.message)
-      } else {
-        console.log(hash)
-      }
-    })
+    const prefix    = (typeof options.prefix !== 'string') ? '' : options.prefix
+    const missingOk = (options.missingOk === true)
+    const hash      = commands.writeTreeSync(prefix, missingOk)
+    console.log(hash)
   })
 
 program
   .command('add')
   .arguments('<path>')
   .action((path, options) => {
-    commands.hashObject(path, true, (err, hash) => {
-      if (err) {
-        console.error(err.message)
-      } else {
-        let mode = commands.UpdateIndexMode.Add
-        commands.updateIndex(hash, path, mode, (err) => {
-          if (err) {
-            console.error(err.message)
-          }
-        })
-      }
-    })
+    const hash = commands.hashObjectSync(path, true)
+    const mode = commands.UpdateIndexMode.Add
+    commands.updateIndexSync(hash, path, mode)
   })
 
 program
   .command('reset')
   .arguments('<path>')
   .action((path, options) => {
-    let mode = commands.UpdateIndexMode.Remove
-    commands.updateIndex(null, path, mode, (err) => {
-      if (err) {
-        console.error(err.message)
-      }
-    })
+    const mode = commands.UpdateIndexMode.Remove
+    commands.updateIndexSync(null, path, mode)
   })
 
 program.parse(process.argv)
