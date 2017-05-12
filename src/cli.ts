@@ -16,44 +16,36 @@ program
 
 program
   .command('hash-object')
+  .arguments('<path>')
   .option('--write')
-  .arguments('<file>')
-  .action((filename, options) => {
+  .action((path, options = {}) => {
     const write = (options.write === true)
-    const id = commands.hashObjectSync(filename, write)
+    const id    = commands.hashObjectSync(path, write)
     console.log(id)
   })
 
 program
   .command('cat-file')
+  .arguments('<object>')
   .option('--type')
   .option('--size')
   .option('--exit')
   .option('--print')
-  .arguments('<object>')
-  .action((arg, options) => {
+  .action((object, options = {}) => {
     const showType   = (options.type === true)
     const showSize   = (options.size === true)
     const showPretty = (options.print === true)
     const exit       = (options.exit === true)
 
     if (util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
-      const id = util.mapStringToObjectID(arg)
+      const id = util.mapStringToObjectID(object)
+      const mode =
+          (showType)   ? commands.CatFileMode.Type :
+          (showSize)   ? commands.CatFileMode.Size :
+          (showPretty) ? commands.CatFileMode.Pretty :
+                         commands.CatFileMode.Exit
 
-      let mode: commands.CatFileMode
-
-      if (showType) {
-        mode = commands.CatFileMode.Type
-      } else if (showSize) {
-        mode = commands.CatFileMode.Size
-      } else if (showPretty) {
-        mode = commands.CatFileMode.Pretty
-      } else {
-        mode = commands.CatFileMode.Exit
-      }
-
-      const output = commands.catFileSync(id, mode)
-      console.log(output)
+      console.log(commands.catFileSync(id, mode))
     } else {
       options.help()
     }
@@ -62,21 +54,20 @@ program
 program
   .command('ls-files')
   .action(() => {
-    const output = commands.lsFilesSync()
-    console.log(output)
+    console.log(commands.lsFilesSync())
   })
 
 program
   .command('update-index')
+  .arguments('<path>')
   .option('--add <object>')
   .option('--remove')
-  .arguments('<path>')
-  .action((name, options) => {
+  .action((name, options = {}) => {
     const hasAdd    = typeof options.add === 'string'
     const hasRemove = options.remove === true
 
     if (hasAdd && hasRemove === false) {
-      const id = util.mapStringToObjectID(options.add)
+      const id   = util.mapStringToObjectID(options.add)
       const mode = commands.UpdateIndexMode.Add
       commands.updateIndexSync(id, name, mode)
     } else if (hasAdd === false && hasRemove) {
@@ -91,17 +82,16 @@ program
   .command('write-tree')
   .option('--prefix <prefix>')
   .option('--missing-ok')
-  .action((options) => {
+  .action((options = {}) => {
     const prefix    = (typeof options.prefix !== 'string') ? '' : options.prefix
     const missingOk = (options.missingOk === true)
-    const id        = commands.writeTreeSync(prefix, missingOk)
-    console.log(id)
+    console.log(commands.writeTreeSync(prefix, missingOk))
   })
 
 program
   .command('add')
   .arguments('<path>')
-  .action((path, options) => {
+  .action((path, options = {}) => {
     const id   = commands.hashObjectSync(path, true)
     const mode = commands.UpdateIndexMode.Add
     commands.updateIndexSync(id, path, mode)
@@ -110,19 +100,19 @@ program
 program
   .command('reset')
   .arguments('<path>')
-  .action((path, options) => {
+  .action((path, options = {}) => {
     const mode = commands.UpdateIndexMode.Remove
     commands.updateIndexSync(null, path, mode)
   })
 
 program
   .command('commit-tree')
-  .arguments('<object>')
+  .arguments('<tree>')
   .option('--parent <list>')
   .option('--author <author>')
   .option('--message <message>')
-  .action((arg, options) => {
-    const id         = util.mapStringToObjectID(arg)
+  .action((tree, options = {}) => {
+    const id         = util.mapStringToObjectID(tree)
     const hasParents = (typeof options.parent === 'string')
     const hasAuthor  = (typeof options.author === 'string')
     const hasMessage = (typeof options.message === 'string')
