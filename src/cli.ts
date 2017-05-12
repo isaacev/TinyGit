@@ -114,4 +114,28 @@ program
     commands.updateIndexSync(null, path, mode)
   })
 
+program
+  .command('commit-tree')
+  .arguments('<object>')
+  .option('--parent <list>')
+  .option('--author <author>')
+  .option('--message <message>')
+  .action((hash, options) => {
+    const tree       = util.mapShortHashToFullHashSync(hash)
+    const hasParents = (typeof options.parent === 'string')
+    const hasAuthor  = (typeof options.author === 'string')
+    const hasMessage = (typeof options.message === 'string')
+
+    if (hasAuthor && hasMessage) {
+      const parents = ((hasParents) ? options.parent.split(',') : []) as string[]
+      const author  = options.author
+      const message = options.message
+
+      const commitId = commands.commitTreeSync(tree, parents, author, message)
+      console.log(commitId)
+    } else {
+      options.help()
+    }
+  })
+
 program.parse(process.argv)

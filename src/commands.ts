@@ -6,6 +6,7 @@ import * as internals from './internals'
 import * as util from './util'
 import { TinyBlob } from './tiny-blob'
 import { TinyIndex } from './tiny-index'
+import { TinyCommit } from './tiny-commit'
 
 export type InitCallback = (err: Error) => void
 export function init (done: InitCallback) {
@@ -176,4 +177,10 @@ export function writeTreeSync (prefix: string, missingOk: boolean): string {
   }
 
   return index.writeTree(prefix, missingOk)
+}
+
+export function commitTreeSync (tree: string, parents: string[], author: string, message: string): string {
+  const commit = new TinyCommit(tree, parents, author, message)
+  internals.writeObjectSync(commit)
+  return commit.hash()
 }
