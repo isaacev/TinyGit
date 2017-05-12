@@ -4,14 +4,14 @@ import { TinyObject } from './tiny-object'
 
 export class TinyCommit implements TinyObject {
   private _tree: string
+  private _parent: string
   private _author: string
-  private _committer: string
   private _message: string
 
-  constructor (tree: string, author: string, committer: string, message: string) {
+  constructor (tree: string, parent: string, author: string, message: string) {
     this._tree = tree
+    this._parent = parent
     this._author = author
-    this._committer = committer
     this._message = message
   }
 
@@ -19,12 +19,12 @@ export class TinyCommit implements TinyObject {
     return this._tree
   }
 
-  public author (): string {
-    return this._author
+  public parent (): string {
+    return this._parent
   }
 
-  public committer (): string {
-    return this._committer
+  public author (): string {
+    return this._author
   }
 
   public message (): string {
@@ -40,7 +40,13 @@ export class TinyCommit implements TinyObject {
   }
 
   public contents (): string {
-    return format('tree %s\nauthor %s\ncommitter %s\n\n%s\n', this.author(), this.committer(), this.message())
+    if (this._parent === null) {
+      const fmt = 'tree %s\nauthor %s\n\n%s\n'
+      return format(fmt, this.tree(), this.author(), this.message())
+    } else {
+      const fmt = 'tree %s\nparent %s\nauthor %s\n\n%s\n'
+      return format(fmt, this.tree(), this.parent(), this.author(), this.message())
+    }
   }
 
   public encode (): string {
