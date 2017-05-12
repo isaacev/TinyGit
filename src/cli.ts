@@ -135,4 +135,22 @@ program
     })
   })
 
+program
+  .command('add')
+  .arguments('<path>')
+  .action((path, options) => {
+    commands.hashObject(path, true, (err, hash) => {
+      if (err) {
+        console.error(err.message)
+      } else {
+        let mode = commands.UpdateIndexMode.Add
+        commands.updateIndex(hash, path, mode, (err) => {
+          if (err) {
+            console.error(err.message)
+          }
+        })
+      }
+    })
+  })
+
 program.parse(process.argv)
