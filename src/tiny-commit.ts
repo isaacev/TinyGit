@@ -61,7 +61,7 @@ export class TinyCommit implements TinyObject {
   }
 
   static decode (encoded: string): TinyCommit {
-    let pattern = /^commit \d+\0(.*)$/
+    let pattern = /^(commit \d+\0)/
     let parsed = encoded.match(pattern)
 
     if (parsed === null) {
@@ -73,7 +73,7 @@ export class TinyCommit implements TinyObject {
     let author: string = null
     let message: string = null
 
-    let body = parsed[1]
+    let body = encoded.substring(parsed[1].length)
     let lines = body.split('\n')
     let linesUsed = 0
 

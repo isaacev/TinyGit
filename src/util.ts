@@ -4,12 +4,15 @@ import sha1 = require('sha1')
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
 import { TinyTree, TinyTreeRecord } from './tiny-tree'
+import { TinyCommit } from './tiny-commit'
 
 export function decodeObject (raw: string): TinyObject {
   if (raw.match(/^blob \d+\0/)) {
     return TinyBlob.decode(raw)
   } else if (raw.match(/^tree \d+\0/)) {
     return TinyTree.decode(raw)
+  } else if (raw.match(/^commit \d+\0/)) {
+    return TinyCommit.decode(raw)
   } else {
     throw new Error('cannot decode object')
   }
