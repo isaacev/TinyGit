@@ -131,4 +131,23 @@ program
     }
   })
 
+program
+  .command('commit')
+  .option('--author <author>')
+  .option('--message <message>')
+  .action((options = {}) => {
+    const hasAuthor  = (typeof options.author === 'string')
+    const hasMessage = (typeof options.message === 'string')
+
+    if (hasAuthor && hasMessage) {
+      const author  = options.author
+      const message = options.message
+
+      const commitId = commands.commitSync(author, message)
+      console.log(commitId)
+    } else {
+      options.help()
+    }
+  })
+
 program.parse(process.argv)

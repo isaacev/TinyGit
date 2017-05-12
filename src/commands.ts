@@ -88,3 +88,14 @@ export function commitTreeSync (id: ObjectID, parents: ObjectID[], author: strin
   internals.writeObjectSync(commit)
   return commit.id()
 }
+
+export function commitSync (author: string, message: string): ObjectID {
+  const treeId = writeTreeSync('', false)
+  const currentBranch = internals.readHeadSync()
+  const latestCommit = internals.readBranchSync(currentBranch)
+  const newCommit = commitTreeSync(treeId, [latestCommit], author, message)
+
+  internals.writeBranchSync(currentBranch, newCommit)
+
+  return newCommit
+}
