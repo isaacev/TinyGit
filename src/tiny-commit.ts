@@ -4,13 +4,13 @@ import { TinyObject } from './tiny-object'
 
 export class TinyCommit implements TinyObject {
   private _tree: string
-  private _parent: string
+  private _parents: string[]
   private _author: string
   private _message: string
 
-  constructor (tree: string, parent: string, author: string, message: string) {
+  constructor (tree: string, parents: string[], author: string, message: string) {
     this._tree = tree
-    this._parent = parent
+    this._parents = parents
     this._author = author
     this._message = message
   }
@@ -19,8 +19,8 @@ export class TinyCommit implements TinyObject {
     return this._tree
   }
 
-  public parent (): string {
-    return this._parent
+  public parents (): string[] {
+    return this._parents
   }
 
   public author (): string {
@@ -40,13 +40,12 @@ export class TinyCommit implements TinyObject {
   }
 
   public contents (): string {
-    if (this._parent === null) {
-      const fmt = 'tree %s\nauthor %s\n\n%s\n'
-      return format(fmt, this.tree(), this.author(), this.message())
-    } else {
-      const fmt = 'tree %s\nparent %s\nauthor %s\n\n%s\n'
-      return format(fmt, this.tree(), this.parent(), this.author(), this.message())
-    }
+    let content = ''
+    content += format('tree %s\n', this.tree())
+    content += this.parents().map(p => format('parent %s\n', p)).join('')
+    content += format('author %s\n\n', this.author())
+    content += format('%s\n', this.message())
+    return content
   }
 
   public encode (): string {
@@ -69,52 +68,31 @@ export class TinyCommit implements TinyObject {
       throw new Error('cannot parse encoded string')
     }
 
-    let body = parsed[1]
-    let lines = body.split('\n')
-    let lineNum = 0
-
     let tree: string = null
-    let parent: string = null
+    let parents: string[] = []
     let author: string = null
     let message: string = null
 
-    // Required `tree` field
-    if ((parsed = lines[lineNum++].match(/^tree ([0-9a-f]{40})$/i))) {
-      tree = parsed[1]
-    } else {
-      throw new Error('corrupted commit object')
-    }
+    let body = parsed[1]
+    let lines = body.split('\n')
+    let linesUsed = 0
 
-    // Optional `parent` field
-    if ((parsed = lines[lineNum].match(/^parent ([0-9a-f]{40})$/i))) {
-      parent = parsed[1]
-      lineNum++
-    }
+    lines.some((line) => {
+      linesUsed++
 
-    // Required `author` field
-    if ((parsed = lines[lineNum++].match(/^author (.*)$/i))) {
-      author = parsed[1]
-    } else {
-      throw new Error('corrupted commit object')
-    }
+      if (line.substring(0, 5) === 'tree ') {
+        tree = line.substring(5)
+      } else if (line.substring(0, 7) === 'parent ') {
+        parents.push(line.substring(7))
+      } else if (line.substring(0, 7) === 'author ') {
+        author = line.substring(7)
+      }
 
-    // Required empty line between metadata and message
-    if (lines.length <= lineNum || lines[lineNum++] !== '') {
-      throw new Error('corrupted commit object')
-    }
+      return (line === '')
+    })
 
-    // Required `message` field
-    if (lines.length > lineNum) {
-      message = lines[lineNum++]
-    } else {
-      throw new Error('corrupted commit object')
-    }
+    message = lines[linesUsed]
 
-    // Required empty line at the end of the commit message
-    if (lines.length <= lineNum || lines[lineNum] !== '') {
-      throw new Error('corrupted commit object')
-    }
-
-    return new TinyCommit(tree, parent, author, message)
+    return new TinyCommit(tree, parents, author, message)
   }
 }
