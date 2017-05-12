@@ -1,6 +1,6 @@
 {
   "name": "tinygit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "an implementation of basic Git functionality to test my understanding of Git interals",
   "repository": {
     "type": "git",
