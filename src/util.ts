@@ -34,38 +34,6 @@ export function isLegalHash (candidate: string): boolean {
   return isFullHash(candidate) || isShortHash(candidate)
 }
 
-export function resolveHash (candidate: string, done: (err: Error, hash?: string) => void): void {
-  if (isShortHash(candidate) || isFullHash(candidate)) {
-    mapShortHashToFullHash(candidate, done)
-  } else {
-    done(new Error('Not a valid object ID'))
-  }
-}
-
-export function mapShortHashToFullHash (candidate: string, done: (err: Error, hash?: string) => void): void {
-  let prefix = candidate.substring(0, 2)
-  let suffix = candidate.substring(2, 4)
-
-  readdir(objectsDirpath(prefix), (err, filenames) => {
-    if (err) {
-      return void done(new Error(err.code))
-    } else {
-      let foundObject = filenames.some((filename) => {
-        if (filename.substring(0, 2) === suffix) {
-          done(null, prefix + filename)
-          return true
-        } else {
-          return false
-        }
-      })
-
-      if (foundObject === false) {
-        return void done(new Error('Not a valid object ID'))
-      }
-    }
-  })
-}
-
 export function mapShortHashToFullHashSync (candidate: string): string {
   const prefix    = candidate.substring(0, 2)
   const suffix    = candidate.substring(2, 4)
