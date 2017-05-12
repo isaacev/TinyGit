@@ -4,6 +4,7 @@ import * as mkdirp from 'mkdirp'
 import { TinyIndex } from './tiny-index'
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
+import { TinyCommit } from './tiny-commit'
 import * as util from './util'
 import { ObjectID } from './object-id'
 
@@ -82,5 +83,37 @@ export function readIndexSync (): TinyIndex {
     return TinyIndex.decode(raw)
   } catch (err) {
     throw new Error('failed to decode index')
+  }
+}
+
+export function writeBranchSync (branchName: string, commit: TinyCommit): void {
+  util.exitIfRepoDoesNotExist()
+
+  const id       = commit.id()
+  const dirpath  = util.branchDirpath()
+  const filepath = util.branchFilepath(branchName)
+
+  try {
+    mkdirp.sync(dirpath)
+  } catch (err) {
+    throw new Error(format('failed to create `%s`', dirpath))
+  }
+
+  try {
+    writeFileSync(filepath, id)
+  } catch (err) {
+    throw new Error(format('failed to write `%s`', filepath))
+  }
+}
+
+export function readBranchSync (branchName: string): ObjectID {
+  util.exitIfRepoDoesNotExist()
+
+  const filepath = util.branchFilepath(branchName)
+
+  try {
+    return new ObjectID(readFileSync(filepath, 'utf8'))
+  } catch (err) {
+    throw new Error(format('failed to read branch `%s`', branchName))
   }
 }
