@@ -21,7 +21,7 @@ program
   .action((path, options = {}) => {
     const write = (options.write === true)
     const id    = commands.hashObjectSync(path, write)
-    console.log(id)
+    console.log(id.toString())
   })
 
 program
@@ -85,7 +85,7 @@ program
   .action((options = {}) => {
     const prefix    = (typeof options.prefix !== 'string') ? '' : options.prefix
     const missingOk = (options.missingOk === true)
-    console.log(commands.writeTreeSync(prefix, missingOk))
+    console.log(commands.writeTreeSync(prefix, missingOk).toString())
   })
 
 program
@@ -125,7 +125,7 @@ program
       const message = options.message
 
       const commitId = commands.commitTreeSync(id, parents, author, message)
-      console.log(commitId)
+      console.log(commitId.toString())
     } else {
       options.help()
     }
@@ -144,7 +144,7 @@ program
       const message = options.message
 
       const commitId = commands.commitSync(author, message)
-      console.log(commitId)
+      console.log(commitId.toString())
     } else {
       options.help()
     }
