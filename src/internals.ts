@@ -71,7 +71,11 @@ export function readIndexSync (): TinyIndex {
   try {
     raw = readFileSync(filepath, 'utf8')
   } catch (err) {
-    throw new Error('failed to read index')
+    if (err && err.code === 'ENOENT') {
+      return new TinyIndex([])
+    } else {
+      throw new Error('failed to read index')
+    }
   }
 
   try {
