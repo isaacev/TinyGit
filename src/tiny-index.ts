@@ -3,6 +3,7 @@ import { parse } from 'path'
 import { computeChildrenOfPrefix } from './util'
 import * as internals from './internals'
 import { TinyTree, TinyTreeRecord } from './tiny-tree'
+import { ObjectID } from './object-id'
 
 export class TinyIndex {
   private _records: TinyTreeRecord[]
@@ -15,29 +16,29 @@ export class TinyIndex {
     this._records = this._records.filter((record) => record.name() !== name)
   }
 
-  add (name: string, hash: string): void {
-    this._records.push(new TinyTreeRecord(name, hash))
+  add (name: string, id: ObjectID): void {
+    this._records.push(new TinyTreeRecord(name, id))
   }
 
-  writeTree (prefix: string, missingOk: boolean): string {
+  writeTree (prefix: string, missingOk: boolean): ObjectID {
     let children = computeChildrenOfPrefix(prefix, this._records)
     let records = [] as TinyTreeRecord[]
 
     children.dirs.forEach((dir) => {
       let name = parse(dir).base
-      let hash = this.writeTree(dir, missingOk)
-      records.push(new TinyTreeRecord(name, hash))
+      let id   = this.writeTree(dir, missingOk)
+      records.push(new TinyTreeRecord(name, id))
     })
 
     children.files.forEach((record) => {
       let name = parse(record.name()).base
-      let hash = record.hash()
-      records.push(new TinyTreeRecord(name, hash))
+      let id = record.id()
+      records.push(new TinyTreeRecord(name, id))
     })
 
     let tree = new TinyTree(records)
     internals.writeObjectSync(tree)
-    return tree.hash()
+    return tree.id()
   }
 
   encode (): string {
@@ -48,7 +49,7 @@ export class TinyIndex {
 
   pretty (): string {
     return this._records.map((record) => {
-      return format('%s %s', record.hash(), record.name())
+      return format('%s %s', record.id(), record.name())
     }).join('\n')
   }
 

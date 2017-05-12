@@ -1,26 +1,27 @@
 import { format } from 'util'
 import { hashString } from './util'
 import { TinyObject } from './tiny-object'
+import { ObjectID } from './object-id'
 
 export class TinyTreeRecord {
-  private _name: string
-  private _hash: string
+  private _name : string
+  private _id   : ObjectID
 
-  constructor (name: string, hash: string) {
+  constructor (name: string, id: ObjectID) {
     this._name = name
-    this._hash = hash
+    this._id   = id
   }
 
   name (): string {
     return this._name
   }
 
-  hash (): string {
-    return this._hash
+  id (): ObjectID {
+    return this._id
   }
 
   encode (): string {
-    return format('%s\0%s', this.name(), this.hash())
+    return format('%s\0%s', this.name(), this.id())
   }
 
   static decode (encoded: string): TinyTreeRecord[] {
@@ -41,8 +42,8 @@ export class TinyTreeRecord {
 
       remaining = remaining.substring(parsed[0].length)
       let name = parsed[1]
-      let hash = parsed[2]
-      records.push(new TinyTreeRecord(name, hash))
+      let id   = new ObjectID(parsed[2])
+      records.push(new TinyTreeRecord(name, id))
     }
 
     return records
@@ -72,13 +73,13 @@ export class TinyTree implements TinyObject {
     return format('tree %d\0%s', this.size(), this.contents())
   }
 
-  hash (): string {
-    return hashString(this.encode())
+  id (): ObjectID {
+    return new ObjectID(hashString(this.encode()))
   }
 
   pretty (): string {
     return this._records.map((record) => {
-      return format('%s %s', record.hash(), record.name())
+      return format('%s %s', record.id(), record.name())
     }).join('\n')
   }
 

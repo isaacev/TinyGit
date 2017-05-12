@@ -1,6 +1,7 @@
 import { format } from 'util'
 import { hashString } from './util'
 import { TinyObject } from './tiny-object'
+import { ObjectID } from './object-id'
 
 export class TinyBlob implements TinyObject {
   private _contents: string
@@ -25,8 +26,8 @@ export class TinyBlob implements TinyObject {
     return format('blob %d\0%s', this.size(), this.contents())
   }
 
-  hash (): string {
-    return hashString(this.encode())
+  id (): ObjectID {
+    return new ObjectID(hashString(this.encode()))
   }
 
   pretty (): string {

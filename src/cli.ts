@@ -1,6 +1,7 @@
 import * as program from 'commander'
 import * as util from './util'
 import * as commands from './commands'
+import { ObjectID } from './object-id'
 
 program
   .version('0.1.0')
@@ -19,8 +20,8 @@ program
   .arguments('<file>')
   .action((filename, options) => {
     const write = (options.write === true)
-    const hash = commands.hashObjectSync(filename, write)
-    console.log(hash)
+    const id = commands.hashObjectSync(filename, write)
+    console.log(id)
   })
 
 program
@@ -30,14 +31,14 @@ program
   .option('--exit')
   .option('--print')
   .arguments('<object>')
-  .action((hash, options) => {
+  .action((arg, options) => {
     const showType   = (options.type === true)
     const showSize   = (options.size === true)
     const showPretty = (options.print === true)
     const exit       = (options.exit === true)
 
     if (util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
-      hash = util.mapShortHashToFullHashSync(hash)
+      const id = util.mapStringToObjectID(arg)
 
       let mode: commands.CatFileMode
 
@@ -51,7 +52,7 @@ program
         mode = commands.CatFileMode.Exit
       }
 
-      const output = commands.catFileSync(hash, mode)
+      const output = commands.catFileSync(id, mode)
       console.log(output)
     } else {
       options.help()
@@ -71,14 +72,14 @@ program
   .option('--remove')
   .arguments('<path>')
   .action((name, options) => {
-    const addIsMissing    = options.add === undefined
-    const removeIsMissing = options.remove === undefined
+    const hasAdd    = typeof options.add === 'string'
+    const hasRemove = options.remove === true
 
-    if (util.isLegalHash(options.add || '') && removeIsMissing) {
-      const hash = util.mapShortHashToFullHashSync(options.add)
+    if (hasAdd && hasRemove === false) {
+      const id = util.mapStringToObjectID(options.add)
       const mode = commands.UpdateIndexMode.Add
-      commands.updateIndexSync(hash, name, mode)
-    } else if (addIsMissing && options.remove === true) {
+      commands.updateIndexSync(id, name, mode)
+    } else if (hasAdd === false && hasRemove) {
       const mode = commands.UpdateIndexMode.Remove
       commands.updateIndexSync(null, name, mode)
     } else {
@@ -93,17 +94,17 @@ program
   .action((options) => {
     const prefix    = (typeof options.prefix !== 'string') ? '' : options.prefix
     const missingOk = (options.missingOk === true)
-    const hash      = commands.writeTreeSync(prefix, missingOk)
-    console.log(hash)
+    const id        = commands.writeTreeSync(prefix, missingOk)
+    console.log(id)
   })
 
 program
   .command('add')
   .arguments('<path>')
   .action((path, options) => {
-    const hash = commands.hashObjectSync(path, true)
+    const id   = commands.hashObjectSync(path, true)
     const mode = commands.UpdateIndexMode.Add
-    commands.updateIndexSync(hash, path, mode)
+    commands.updateIndexSync(id, path, mode)
   })
 
 program
@@ -120,18 +121,20 @@ program
   .option('--parent <list>')
   .option('--author <author>')
   .option('--message <message>')
-  .action((hash, options) => {
-    const tree       = util.mapShortHashToFullHashSync(hash)
+  .action((arg, options) => {
+    const id         = util.mapStringToObjectID(arg)
     const hasParents = (typeof options.parent === 'string')
     const hasAuthor  = (typeof options.author === 'string')
     const hasMessage = (typeof options.message === 'string')
 
     if (hasAuthor && hasMessage) {
-      const parents = ((hasParents) ? options.parent.split(',') : []) as string[]
+      const parents = ((hasParents) ? options.parent.split(',') : []).map((arg) => {
+        return util.mapStringToObjectID(arg)
+      }) as ObjectID[]
       const author  = options.author
       const message = options.message
 
-      const commitId = commands.commitTreeSync(tree, parents, author, message)
+      const commitId = commands.commitTreeSync(id, parents, author, message)
       console.log(commitId)
     } else {
       options.help()

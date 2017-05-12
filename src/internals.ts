@@ -5,15 +5,14 @@ import { TinyIndex } from './tiny-index'
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
 import * as util from './util'
+import { ObjectID } from './object-id'
 
 export function writeObjectSync (obj: TinyObject): TinyObject {
   util.exitIfRepoDoesNotExist()
 
-  const hash     = obj.hash()
-  const prefix   = hash.substring(0, 2)
-  const suffix   = hash.substring(2)
-  const dirpath  = util.objectsDirpath(prefix)
-  const filepath = util.objectsFilepath(prefix, suffix)
+  const id       = obj.id()
+  const dirpath  = util.objectsDirpath(id.prefix())
+  const filepath = util.objectsFilepath(id.prefix(), id.suffix())
 
   try {
     mkdirp.sync(dirpath)
@@ -30,12 +29,10 @@ export function writeObjectSync (obj: TinyObject): TinyObject {
   return obj
 }
 
-export function readObjectSync (hash: string): TinyObject {
+export function readObjectSync (id: ObjectID): TinyObject {
   util.exitIfRepoDoesNotExist()
 
-  const prefix   = hash.substring(0, 2)
-  const suffix   = hash.substring(2)
-  const filepath = util.objectsFilepath(prefix, suffix)
+  const filepath = util.objectsFilepath(id.prefix(), id.suffix())
 
   let raw = ''
   try {

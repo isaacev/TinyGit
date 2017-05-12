@@ -5,6 +5,7 @@ import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
 import { TinyTree, TinyTreeRecord } from './tiny-tree'
 import { TinyCommit } from './tiny-commit'
+import { ObjectID } from './object-id'
 
 export function decodeObject (raw: string): TinyObject {
   if (raw.match(/^blob \d+\0/)) {
@@ -22,21 +23,9 @@ export function hashString (str: string): string {
   return String(sha1(str))
 }
 
-export function isShortHash (candidate: string): boolean {
-  return /^[0-9a-f]{4}$/i.test(candidate)
-}
-
-export function isFullHash (candidate: string): boolean {
-  return /^[0-9a-f]{40}$/i.test(candidate)
-}
-
-export function isLegalHash (candidate: string): boolean {
-  return isFullHash(candidate) || isShortHash(candidate)
-}
-
-export function mapShortHashToFullHashSync (candidate: string): string {
-  const prefix    = candidate.substring(0, 2)
-  const suffix    = candidate.substring(2, 4)
+export function mapStringToObjectID (arg: string): ObjectID {
+  const prefix    = arg.substring(0, 2)
+  const suffix    = arg.substring(2, 4)
   const dirpath   = objectsDirpath(prefix)
   const filenames = readdirSync(dirpath)
 
@@ -44,7 +33,7 @@ export function mapShortHashToFullHashSync (candidate: string): string {
     const filename = filenames[i]
 
     if (filename.substring(0, 2) === suffix) {
-      return prefix + filename;
+      return new ObjectID(prefix + filename);
     }
   }
 

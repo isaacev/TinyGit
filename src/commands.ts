@@ -7,6 +7,7 @@ import * as util from './util'
 import { TinyBlob } from './tiny-blob'
 import { TinyIndex } from './tiny-index'
 import { TinyCommit } from './tiny-commit'
+import { ObjectID } from './object-id'
 
 export type InitCallback = (err: Error) => void
 export function init (done: InitCallback) {
@@ -17,7 +18,7 @@ export function init (done: InitCallback) {
   }
 }
 
-export function hashObjectSync (filename: string, write: boolean): string {
+export function hashObjectSync (filename: string, write: boolean): ObjectID {
   let contents = ''
   try {
     contents = readFileSync(join(process.cwd(), filename), 'utf8')
@@ -31,12 +32,12 @@ export function hashObjectSync (filename: string, write: boolean): string {
     internals.writeObjectSync(blob)
   }
 
-  return blob.hash()
+  return blob.id()
 }
 
 export enum CatFileMode { Type, Size, Pretty, Exit }
-export function catFileSync (hash: string, mode: CatFileMode): string {
-  let obj = internals.readObjectSync(hash)
+export function catFileSync (id: ObjectID, mode: CatFileMode): string {
+  let obj = internals.readObjectSync(id)
 
   switch (mode) {
     case CatFileMode.Type:
@@ -55,20 +56,20 @@ export function lsFilesSync (): string {
 }
 
 export enum UpdateIndexMode { Add, Remove }
-export function updateIndexSync (hash: string, name: string, mode: UpdateIndexMode): void {
+export function updateIndexSync (id: ObjectID, name: string, mode: UpdateIndexMode): void {
   const index = internals.readIndexSync()
   name = normalize(name)
 
   index.remove(name)
 
   if (mode === UpdateIndexMode.Add) {
-    index.add(name, hash)
+    index.add(name, id)
   }
 
   internals.writeIndexSync(index)
 }
 
-export function writeTreeSync (prefix: string, missingOk: boolean): string {
+export function writeTreeSync (prefix: string, missingOk: boolean): ObjectID {
   const index = internals.readIndexSync()
   prefix = normalize(prefix)
 
@@ -79,8 +80,8 @@ export function writeTreeSync (prefix: string, missingOk: boolean): string {
   return index.writeTree(prefix, missingOk)
 }
 
-export function commitTreeSync (tree: string, parents: string[], author: string, message: string): string {
-  const commit = new TinyCommit(tree, parents, author, message)
+export function commitTreeSync (id: ObjectID, parents: ObjectID[], author: string, message: string): ObjectID {
+  const commit = new TinyCommit(id, parents, author, message)
   internals.writeObjectSync(commit)
-  return commit.hash()
+  return commit.id()
 }

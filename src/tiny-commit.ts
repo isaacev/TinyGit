@@ -1,25 +1,26 @@
 import { format } from 'util'
 import { hashString } from './util'
 import { TinyObject } from './tiny-object'
+import { ObjectID } from './object-id'
 
 export class TinyCommit implements TinyObject {
-  private _tree: string
-  private _parents: string[]
+  private _tree: ObjectID
+  private _parents: ObjectID[]
   private _author: string
   private _message: string
 
-  constructor (tree: string, parents: string[], author: string, message: string) {
+  constructor (tree: ObjectID, parents: ObjectID[], author: string, message: string) {
     this._tree = tree
     this._parents = parents
     this._author = author
     this._message = message
   }
 
-  public tree (): string {
+  public tree (): ObjectID {
     return this._tree
   }
 
-  public parents (): string[] {
+  public parents (): ObjectID[] {
     return this._parents
   }
 
@@ -52,8 +53,8 @@ export class TinyCommit implements TinyObject {
     return format('commit %d\0%s', this.size(), this.contents())
   }
 
-  public hash (): string {
-    return hashString(this.encode())
+  public id (): ObjectID {
+    return new ObjectID(hashString(this.encode()))
   }
 
   public pretty (): string {
@@ -68,8 +69,8 @@ export class TinyCommit implements TinyObject {
       throw new Error('cannot parse encoded string')
     }
 
-    let tree: string = null
-    let parents: string[] = []
+    let tree: ObjectID = null
+    let parents: ObjectID[] = []
     let author: string = null
     let message: string = null
 
@@ -81,9 +82,9 @@ export class TinyCommit implements TinyObject {
       linesUsed++
 
       if (line.substring(0, 5) === 'tree ') {
-        tree = line.substring(5)
+        tree = new ObjectID(line.substring(5))
       } else if (line.substring(0, 7) === 'parent ') {
-        parents.push(line.substring(7))
+        parents.push(new ObjectID(line.substring(7)))
       } else if (line.substring(0, 7) === 'author ') {
         author = line.substring(7)
       }
