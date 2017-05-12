@@ -153,4 +153,16 @@ program
     })
   })
 
+program
+  .command('reset')
+  .arguments('<path>')
+  .action((path, options) => {
+    let mode = commands.UpdateIndexMode.Remove
+    commands.updateIndex(null, path, mode, (err) => {
+      if (err) {
+        console.error(err.message)
+      }
+    })
+  })
+
 program.parse(process.argv)
