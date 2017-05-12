@@ -60,4 +60,61 @@ export class TinyCommit implements TinyObject {
   public pretty (): string {
     return this.contents()
   }
+
+  static decode (encoded: string): TinyCommit {
+    let pattern = /^commit \d+\0(.*)$/
+    let parsed = encoded.match(pattern)
+
+    if (parsed === null) {
+      throw new Error('cannot parse encoded string')
+    }
+
+    let body = parsed[1]
+    let lines = body.split('\n')
+    let lineNum = 0
+
+    let tree: string = null
+    let parent: string = null
+    let author: string = null
+    let message: string = null
+
+    // Required `tree` field
+    if ((parsed = lines[lineNum++].match(/^tree ([0-9a-f]{40})$/i))) {
+      tree = parsed[1]
+    } else {
+      throw new Error('corrupted commit object')
+    }
+
+    // Optional `parent` field
+    if ((parsed = lines[lineNum].match(/^parent ([0-9a-f]{40})$/i))) {
+      parent = parsed[1]
+      lineNum++
+    }
+
+    // Required `author` field
+    if ((parsed = lines[lineNum++].match(/^author (.*)$/i))) {
+      author = parsed[1]
+    } else {
+      throw new Error('corrupted commit object')
+    }
+
+    // Required empty line between metadata and message
+    if (lines.length <= lineNum || lines[lineNum++] !== '') {
+      throw new Error('corrupted commit object')
+    }
+
+    // Required `message` field
+    if (lines.length > lineNum) {
+      message = lines[lineNum++]
+    } else {
+      throw new Error('corrupted commit object')
+    }
+
+    // Required empty line at the end of the commit message
+    if (lines.length <= lineNum || lines[lineNum] !== '') {
+      throw new Error('corrupted commit object')
+    }
+
+    return new TinyCommit(tree, parent, author, message)
+  }
 }
