@@ -40,4 +40,6 @@ export class ObjectID {
   public toString (): string {
     return this.whole()
   }
+
+  public static NULL = new ObjectID('0000000000000000000000000000000000000000')
 }

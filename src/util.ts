@@ -66,6 +66,10 @@ export function branchFilepath (name: string): string {
   return join(branchDirpath(), name)
 }
 
+export function headFilepath (): string {
+  return join(repoDirpath(), 'HEAD')
+}
+
 export function objectsDirpath (prefix: string): string {
   return join(repoDirpath(), 'objects', prefix)
 }

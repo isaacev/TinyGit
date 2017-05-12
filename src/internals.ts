@@ -86,10 +86,9 @@ export function readIndexSync (): TinyIndex {
   }
 }
 
-export function writeBranchSync (branchName: string, commit: TinyCommit): void {
+export function writeBranchSync (branchName: string, id: ObjectID = ObjectID.NULL): void {
   util.exitIfRepoDoesNotExist()
 
-  const id       = commit.id()
   const dirpath  = util.branchDirpath()
   const filepath = util.branchFilepath(branchName)
 
@@ -115,5 +114,29 @@ export function readBranchSync (branchName: string): ObjectID {
     return new ObjectID(readFileSync(filepath, 'utf8'))
   } catch (err) {
     throw new Error(format('failed to read branch `%s`', branchName))
+  }
+}
+
+export function writeHeadSync (branchName: string): void {
+  util.exitIfRepoDoesNotExist()
+
+  const filepath = util.headFilepath()
+
+  try {
+    writeFileSync(filepath, branchName)
+  } catch (err) {
+    throw new Error(format('failed to write HEAD `%s`', filepath))
+  }
+}
+
+export function readHeadSync (): string {
+  util.exitIfRepoDoesNotExist()
+
+  const filepath = util.headFilepath()
+
+  try {
+    return readFileSync(filepath, 'utf8')
+  } catch (err) {
+    throw new Error(format('failed to read HEAD `%s`', filepath))
   }
 }

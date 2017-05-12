@@ -16,6 +16,9 @@ export function init (done: InitCallback) {
   } catch (err) {
     throw new Error('failed to initialize repository')
   }
+
+  internals.writeBranchSync('master')
+  internals.writeHeadSync('master')
 }
 
 export function hashObjectSync (filename: string, write: boolean): ObjectID {
