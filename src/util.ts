@@ -1,5 +1,5 @@
 import { join, parse, sep } from 'path'
-import { existsSync, readdir, readdirSync } from 'fs'
+import { existsSync, readdirSync } from 'fs'
 import sha1 = require('sha1')
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
