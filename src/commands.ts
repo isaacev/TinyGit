@@ -2,7 +2,7 @@ import { format } from 'util'
 import { join, sep, normalize } from 'path'
 import { readFile, readFileSync } from 'fs'
 import * as mkdirp from 'mkdirp'
-import * as internals from './internals'
+import * as io from './io'
 import * as util from './util'
 import { TinyBlob } from './tiny-blob'
 import { TinyIndex } from './tiny-index'
@@ -17,8 +17,8 @@ export function init (done: InitCallback) {
     throw new Error('failed to initialize repository')
   }
 
-  internals.writeBranchSync('master')
-  internals.writeHeadSync('master')
+  io.writeBranchSync('master')
+  io.writeHeadSync('master')
 }
 
 export function hashObjectSync (filename: string, write: boolean): ObjectID {
@@ -32,7 +32,7 @@ export function hashObjectSync (filename: string, write: boolean): ObjectID {
   const blob = new TinyBlob(contents)
 
   if (write) {
-    internals.writeObjectSync(blob)
+    io.writeObjectSync(blob)
   }
 
   return blob.id()
@@ -40,7 +40,7 @@ export function hashObjectSync (filename: string, write: boolean): ObjectID {
 
 export enum CatFileMode { Type, Size, Pretty, Exit }
 export function catFileSync (id: ObjectID, mode: CatFileMode): string {
-  let obj = internals.readObjectSync(id)
+  let obj = io.readObjectSync(id)
 
   switch (mode) {
     case CatFileMode.Type:
@@ -55,12 +55,12 @@ export function catFileSync (id: ObjectID, mode: CatFileMode): string {
 }
 
 export function lsFilesSync (): string {
-  return internals.readIndexSync().pretty()
+  return io.readIndexSync().pretty()
 }
 
 export enum UpdateIndexMode { Add, Remove }
 export function updateIndexSync (id: ObjectID, name: string, mode: UpdateIndexMode): void {
-  const index = internals.readIndexSync()
+  const index = io.readIndexSync()
   name = normalize(name)
 
   index.remove(name)
@@ -69,11 +69,11 @@ export function updateIndexSync (id: ObjectID, name: string, mode: UpdateIndexMo
     index.add(name, id)
   }
 
-  internals.writeIndexSync(index)
+  io.writeIndexSync(index)
 }
 
 export function writeTreeSync (prefix: string, missingOk: boolean): ObjectID {
-  const index = internals.readIndexSync()
+  const index = io.readIndexSync()
   prefix = normalize(prefix)
 
   if (prefix !== '.') {
@@ -85,17 +85,17 @@ export function writeTreeSync (prefix: string, missingOk: boolean): ObjectID {
 
 export function commitTreeSync (id: ObjectID, parents: ObjectID[], author: string, message: string): ObjectID {
   const commit = new TinyCommit(id, parents, author, message)
-  internals.writeObjectSync(commit)
+  io.writeObjectSync(commit)
   return commit.id()
 }
 
 export function commitSync (author: string, message: string): ObjectID {
   const treeId = writeTreeSync('', false)
-  const currentBranch = internals.readHeadSync()
-  const latestCommit = internals.readBranchSync(currentBranch)
+  const currentBranch = io.readHeadSync()
+  const latestCommit = io.readBranchSync(currentBranch)
   const newCommit = commitTreeSync(treeId, [latestCommit], author, message)
 
-  internals.writeBranchSync(currentBranch, newCommit)
+  io.writeBranchSync(currentBranch, newCommit)
 
   return newCommit
 }

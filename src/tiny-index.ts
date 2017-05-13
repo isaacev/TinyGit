@@ -1,7 +1,7 @@
 import { format } from 'util'
 import { parse } from 'path'
 import { computeChildrenOfPrefix } from './util'
-import * as internals from './internals'
+import * as io from './io'
 import { TinyTree, TinyTreeRecord } from './tiny-tree'
 import { ObjectID } from './object-id'
 
@@ -37,7 +37,7 @@ export class TinyIndex {
     })
 
     let tree = new TinyTree(records)
-    internals.writeObjectSync(tree)
+    io.writeObjectSync(tree)
     return tree.id()
   }
 
