@@ -1,7 +1,6 @@
 import { format } from 'util'
 import { join, sep, normalize } from 'path'
-import { readFile, readFileSync } from 'fs'
-import * as mkdirp from 'mkdirp'
+import { mkdirSync, readFile, readFileSync } from 'fs'
 import * as io from './io'
 import * as util from './util'
 import { TinyBlob } from './tiny-blob'
@@ -12,7 +11,7 @@ import { ObjectID } from './object-id'
 export type InitCallback = (err: Error) => void
 export function init (done: InitCallback) {
   try {
-    mkdirp.sync(join(util.repoDirpath(), 'objects'))
+    mkdirSync(util.repoDirpath())
   } catch (err) {
     throw new Error('failed to initialize repository')
   }
