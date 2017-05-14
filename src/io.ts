@@ -89,7 +89,7 @@ export function writeBranchSync (branchName: string, id: ObjectID = ObjectID.NUL
   }
 
   try {
-    writeFileSync(filepath, id)
+    writeFileSync(filepath, id.toString() + '\n')
   } catch (err) {
     throw new Error(format('failed to write `%s`', filepath))
   }
