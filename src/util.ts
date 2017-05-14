@@ -40,14 +40,8 @@ export function mapStringToObjectID (arg: string): ObjectID {
   throw new Error('invalid object ID')
 }
 
-export function exitIfRepoDoesNotExist (): boolean {
-  if (false === existsSync(repoDirpath())) {
-    console.error('Not a TinyGit repository')
-    process.exit(1)
-    return true
-  }
-
-  return false
+export function repoDoesNotExist (): boolean {
+  return (false === existsSync(repoDirpath()))
 }
 
 export function repoDirpath (): string {

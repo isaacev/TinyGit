@@ -19,6 +19,11 @@ program
   .arguments('<path>')
   .option('--write')
   .action((path, options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const write = (options.write === true)
     const id    = commands.hashObjectSync(path, write)
     console.log(id.toString())
@@ -32,6 +37,11 @@ program
   .option('--exit')
   .option('--print')
   .action((object, options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const showType   = (options.type === true)
     const showSize   = (options.size === true)
     const showPretty = (options.print === true)
@@ -54,6 +64,11 @@ program
 program
   .command('ls-files')
   .action(() => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     console.log(commands.lsFilesSync())
   })
 
@@ -63,6 +78,11 @@ program
   .option('--add <object>')
   .option('--remove')
   .action((name, options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const hasAdd    = typeof options.add === 'string'
     const hasRemove = options.remove === true
 
@@ -83,6 +103,11 @@ program
   .option('--prefix <prefix>')
   .option('--missing-ok')
   .action((options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const prefix    = (typeof options.prefix !== 'string') ? '' : options.prefix
     const missingOk = (options.missingOk === true)
     console.log(commands.writeTreeSync(prefix, missingOk).toString())
@@ -92,6 +117,11 @@ program
   .command('add')
   .arguments('<path>')
   .action((path, options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const id   = commands.hashObjectSync(path, true)
     const mode = commands.UpdateIndexMode.Add
     commands.updateIndexSync(id, path, mode)
@@ -101,6 +131,11 @@ program
   .command('reset')
   .arguments('<path>')
   .action((path, options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const mode = commands.UpdateIndexMode.Remove
     commands.updateIndexSync(null, path, mode)
   })
@@ -112,6 +147,11 @@ program
   .option('--author <author>')
   .option('--message <message>')
   .action((tree, options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const id         = util.mapStringToObjectID(tree)
     const hasParents = (typeof options.parent === 'string')
     const hasAuthor  = (typeof options.author === 'string')
@@ -136,6 +176,11 @@ program
   .option('--author <author>')
   .option('--message <message>')
   .action((options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
     const hasAuthor  = (typeof options.author === 'string')
     const hasMessage = (typeof options.message === 'string')
 

@@ -9,8 +9,6 @@ import * as util from './util'
 import { ObjectID } from './object-id'
 
 export function writeObjectSync (obj: TinyObject): TinyObject {
-  util.exitIfRepoDoesNotExist()
-
   const id       = obj.id()
   const dirpath  = util.objectsDirpath(id.prefix())
   const filepath = util.objectsFilepath(id.prefix(), id.suffix())
@@ -31,8 +29,6 @@ export function writeObjectSync (obj: TinyObject): TinyObject {
 }
 
 export function readObjectSync (id: ObjectID): TinyObject {
-  util.exitIfRepoDoesNotExist()
-
   const filepath = util.objectsFilepath(id.prefix(), id.suffix())
 
   let raw = ''
@@ -50,8 +46,6 @@ export function readObjectSync (id: ObjectID): TinyObject {
 }
 
 export function writeIndexSync (index: TinyIndex): TinyIndex {
-  util.exitIfRepoDoesNotExist()
-
   const filepath = util.indexFilepath()
 
   try {
@@ -64,8 +58,6 @@ export function writeIndexSync (index: TinyIndex): TinyIndex {
 }
 
 export function readIndexSync (): TinyIndex {
-  util.exitIfRepoDoesNotExist()
-
   const filepath = util.indexFilepath()
 
   let raw = ''
@@ -87,8 +79,6 @@ export function readIndexSync (): TinyIndex {
 }
 
 export function writeBranchSync (branchName: string, id: ObjectID = ObjectID.NULL): void {
-  util.exitIfRepoDoesNotExist()
-
   const dirpath  = util.branchDirpath()
   const filepath = util.branchFilepath(branchName)
 
@@ -106,8 +96,6 @@ export function writeBranchSync (branchName: string, id: ObjectID = ObjectID.NUL
 }
 
 export function readBranchSync (branchName: string): ObjectID {
-  util.exitIfRepoDoesNotExist()
-
   const filepath = util.branchFilepath(branchName)
 
   try {
@@ -118,8 +106,6 @@ export function readBranchSync (branchName: string): ObjectID {
 }
 
 export function writeHeadSync (branchName: string): void {
-  util.exitIfRepoDoesNotExist()
-
   const filepath = util.headFilepath()
 
   try {
@@ -130,8 +116,6 @@ export function writeHeadSync (branchName: string): void {
 }
 
 export function readHeadSync (): string {
-  util.exitIfRepoDoesNotExist()
-
   const filepath = util.headFilepath()
 
   try {
