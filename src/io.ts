@@ -1,6 +1,6 @@
 import { format } from 'util'
 import { writeFile, writeFileSync, readFile, readFileSync } from 'fs'
-import * as mkdirp from 'mkdirp'
+import { sync as mkdirpSync } from 'mkdirp'
 import { TinyIndex } from './tiny-index'
 import { TinyObject } from './tiny-object'
 import { TinyBlob } from './tiny-blob'
@@ -14,7 +14,7 @@ export function writeObjectSync (obj: TinyObject): TinyObject {
   const filepath = util.objectsFilepath(id.prefix(), id.suffix())
 
   try {
-    mkdirp.sync(dirpath)
+    mkdirpSync(dirpath)
   } catch (err) {
     throw new Error(format('failed to create `%s`', dirpath))
   }
@@ -83,7 +83,7 @@ export function writeBranchSync (branchName: string, id: ObjectID = ObjectID.NUL
   const filepath = util.branchFilepath(branchName)
 
   try {
-    mkdirp.sync(dirpath)
+    mkdirpSync(dirpath)
   } catch (err) {
     throw new Error(format('failed to create `%s`', dirpath))
   }
