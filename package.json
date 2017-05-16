@@ -10,7 +10,9 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "bin": "./build/bin.js",
+  "bin": {
+    "tiny": "./build/bin.js"
+  },
   "author": "Isaac Evavold <ievavold@wisc.edu>",
   "license": "MIT",
   "devDependencies": {
