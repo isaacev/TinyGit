@@ -1,5 +1,5 @@
 import { format } from 'util'
-import { parse } from 'path'
+import { parse, isAbsolute, relative } from 'path'
 import { computeChildrenOfPrefix } from './util'
 import * as io from './io'
 import { TinyTree, TinyTreeRecord } from './tiny-tree'
@@ -18,6 +18,28 @@ export class TinyIndex {
 
   add (name: string, id: ObjectID): void {
     this._records.push(new TinyTreeRecord(name, id))
+  }
+
+  getRecord (name: string): TinyTreeRecord {
+    if (isAbsolute(name)) {
+      name = relative(process.cwd(), name)
+    }
+
+    for (let i = 0; i < this._records.length; i++) {
+      if (this._records[i].name() === name) {
+        return this._records[i]
+      }
+    }
+
+    return null
+  }
+
+  isTracked (name: string): boolean {
+    if (isAbsolute(name)) {
+      name = relative(process.cwd(), name)
+    }
+
+    return this._records.some((record) => (record.name() === name))
   }
 
   writeTree (prefix: string, missingOk: boolean): ObjectID {
