@@ -42,6 +42,18 @@ export class TinyIndex {
     return this._records.some((record) => (record.name() === name))
   }
 
+  map<T> (iteratee: (record: TinyTreeRecord) => T): T[] {
+    return this._records.map((record) => {
+      return iteratee.apply(iteratee, [record])
+    })
+  }
+
+  reduce<T> (iteratee: (accum: T, record: TinyTreeRecord) => T, memo: T): T {
+    return this._records.reduce((accum, record) => {
+      return iteratee.apply(iteratee, [accum, record])
+    }, memo)
+  }
+
   writeTree (prefix: string, missingOk: boolean): ObjectID {
     let children = computeChildrenOfPrefix(prefix, this._records)
     let records = [] as TinyTreeRecord[]
