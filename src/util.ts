@@ -1,4 +1,4 @@
-import { join, parse, sep } from 'path'
+import { normalize, join, parse, sep } from 'path'
 import { existsSync, readdirSync } from 'fs'
 import sha1 = require('sha1')
 import { TinyObject } from './tiny-object'
@@ -118,4 +118,10 @@ export function computeChildrenOfPrefix (prefix: string, records: TinyTreeRecord
 
     return accum
   }, { files: [] as TinyTreeRecord[], dirs: [] as string[] })
+}
+
+export function dirParents (fullPath: string): string[] {
+  return normalize(fullPath).split(sep).reduce((accum, dir) => {
+    return accum.concat(join(accum[accum.length - 1], dir))
+  }, ['.'])
 }

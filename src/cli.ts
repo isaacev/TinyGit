@@ -195,6 +195,17 @@ program
     }
   })
 
+program
+  .command('status')
+  .action((options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
+    console.log(commands.statusSync().trim())
+  })
+
 program.parse(process.argv)
 
 if (!process.argv.slice(2).length) {
