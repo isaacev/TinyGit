@@ -1,5 +1,5 @@
 import { format } from 'util'
-import { writeFile, writeFileSync, readFile, readFileSync } from 'fs'
+import { writeFile, writeFileSync, readFileSync } from 'fs'
 import { sync as mkdirpSync } from 'mkdirp'
 import { TinyIndex } from './tiny-index'
 import { TinyObject } from './tiny-object'
