@@ -8,20 +8,6 @@ import { TinyIndex } from './tiny-index'
 import { TinyCommit } from './tiny-commit'
 import { ObjectID } from './object-id'
 
-export enum UpdateIndexMode { Add, Remove }
-export function updateIndexSync (id: ObjectID, name: string, mode: UpdateIndexMode): void {
-  const index = io.readIndexSync()
-  name = normalize(name)
-
-  index.remove(name)
-
-  if (mode === UpdateIndexMode.Add) {
-    index.add(name, id)
-  }
-
-  io.writeIndexSync(index)
-}
-
 export function writeTreeSync (prefix: string, missingOk: boolean): ObjectID {
   const index = io.readIndexSync()
   prefix = normalize(prefix)

@@ -7,6 +7,7 @@ import { init } from './command-init'
 import { hashObject } from './command-hash-object'
 import { catFile, CatFileMode } from './command-cat-file'
 import { lsFiles } from './command-ls-files'
+import { updateIndex, UpdateIndexMode } from './command-update-index'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
 
@@ -93,11 +94,11 @@ program
 
     if (hasAdd && hasRemove === false) {
       const id   = util.mapStringToObjectID(options.add)
-      const mode = commands.UpdateIndexMode.Add
-      commands.updateIndexSync(id, name, mode)
+      const mode = UpdateIndexMode.Add
+      updateIndex(id, name, mode)
     } else if (hasAdd === false && hasRemove) {
-      const mode = commands.UpdateIndexMode.Remove
-      commands.updateIndexSync(null, name, mode)
+      const mode = UpdateIndexMode.Remove
+      updateIndex(null, name, mode)
     } else {
       options.help()
     }
@@ -128,8 +129,8 @@ program
     }
 
     const id   = hashObject(path, true)
-    const mode = commands.UpdateIndexMode.Add
-    commands.updateIndexSync(id, path, mode)
+    const mode = UpdateIndexMode.Add
+    updateIndex(id, path, mode)
   })
 
 program
@@ -141,8 +142,8 @@ program
       return
     }
 
-    const mode = commands.UpdateIndexMode.Remove
-    commands.updateIndexSync(null, path, mode)
+    const mode = UpdateIndexMode.Remove
+    updateIndex(null, path, mode)
   })
 
 program
