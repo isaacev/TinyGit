@@ -9,6 +9,7 @@ import { catFile, CatFileMode } from './command-cat-file'
 import { lsFiles } from './command-ls-files'
 import { updateIndex, UpdateIndexMode } from './command-update-index'
 import { writeTree } from './command-write-tree'
+import { commitTree } from './command-commit-tree'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
 
@@ -171,7 +172,7 @@ program
       const author  = options.author
       const message = options.message
 
-      const commitId = commands.commitTreeSync(id, parents, author, message)
+      const commitId = commitTree(id, parents, author, message)
       console.log(commitId.toString())
     } else {
       options.help()

@@ -8,18 +8,13 @@ import { TinyIndex } from './tiny-index'
 import { TinyCommit } from './tiny-commit'
 import { ObjectID } from './object-id'
 import { writeTree } from './command-write-tree'
-
-export function commitTreeSync (id: ObjectID, parents: ObjectID[], author: string, message: string): ObjectID {
-  const commit = new TinyCommit(id, parents, author, message)
-  io.writeObjectSync(commit)
-  return commit.id()
-}
+import { commitTree } from './command-commit-tree'
 
 export function commitSync (author: string, message: string): ObjectID {
   const treeId = writeTree('', false)
   const currentBranch = io.readHeadSync()
   const latestCommit = io.readBranchSync(currentBranch)
-  const newCommit = commitTreeSync(treeId, [latestCommit], author, message)
+  const newCommit = commitTree(treeId, [latestCommit], author, message)
 
   io.writeBranchSync(currentBranch, newCommit)
 
