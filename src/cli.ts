@@ -3,6 +3,7 @@ import * as util from './util'
 import * as commands from './commands'
 import { ObjectID } from './object-id'
 
+import { hashObject } from './command-hash-object'
 import { log } from './command-log'
 
 program
@@ -27,7 +28,7 @@ program
     }
 
     const write = (options.write === true)
-    const id    = commands.hashObjectSync(path, write)
+    const id    = hashObject(path, write)
     console.log(id.toString())
   })
 

@@ -20,23 +20,6 @@ export function init (done: InitCallback) {
   io.writeHeadSync('master')
 }
 
-export function hashObjectSync (filename: string, write: boolean): ObjectID {
-  let contents = ''
-  try {
-    contents = readFileSync(join(process.cwd(), filename), 'utf8')
-  } catch (err) {
-    throw new Error(format('failed to read `%s`', filename))
-  }
-
-  const blob = new TinyBlob(contents)
-
-  if (write) {
-    io.writeObjectSync(blob)
-  }
-
-  return blob.id()
-}
-
 export enum CatFileMode { Type, Size, Pretty, Exit }
 export function catFileSync (id: ObjectID, mode: CatFileMode): string {
   let obj = io.readObjectSync(id)

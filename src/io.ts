@@ -1,4 +1,5 @@
 import { format } from 'util'
+import { isAbsolute, resolve } from 'path'
 import { writeFile, writeFileSync, readFileSync } from 'fs'
 import { sync as mkdirpSync } from 'mkdirp'
 import { TinyIndex } from './tiny-index'
@@ -7,6 +8,18 @@ import { TinyBlob } from './tiny-blob'
 import { TinyCommit } from './tiny-commit'
 import * as util from './util'
 import { ObjectID } from './object-id'
+
+export function readFile (path: string): string {
+  if (isAbsolute(path) === false) {
+    path = resolve(path)
+  }
+
+  try {
+    return readFileSync(path, 'utf8')
+  } catch (err) {
+    throw new Error(format('failed to read `%s`', path))
+  }
+}
 
 export function writeObjectSync (obj: TinyObject): TinyObject {
   const id       = obj.id()
