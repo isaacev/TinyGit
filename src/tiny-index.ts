@@ -17,6 +17,7 @@ export class TinyIndex {
   }
 
   add (name: string, id: ObjectID): void {
+    this.remove(name)
     this._records.push(new TinyTreeRecord(name, id))
   }
 
