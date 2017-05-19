@@ -1,6 +1,5 @@
 import * as program from 'commander'
 import * as util from './util'
-import * as commands from './commands'
 import { ObjectID } from './object-id'
 
 import { init } from './command-init'
@@ -10,6 +9,7 @@ import { lsFiles } from './command-ls-files'
 import { updateIndex, UpdateIndexMode } from './command-update-index'
 import { writeTree } from './command-write-tree'
 import { commitTree } from './command-commit-tree'
+import { commit } from './command-commit'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
 
@@ -196,7 +196,7 @@ program
       const author  = options.author
       const message = options.message
 
-      const commitId = commands.commitSync(author, message)
+      const commitId = commit(author, message)
       console.log(commitId.toString())
     } else {
       options.help()
