@@ -125,7 +125,7 @@ program
       return
     }
 
-    const id   = commands.hashObjectSync(path, true)
+    const id   = hashObject(path, true)
     const mode = commands.UpdateIndexMode.Add
     commands.updateIndexSync(id, path, mode)
   })
