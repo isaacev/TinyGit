@@ -7,6 +7,7 @@ import { hashObject } from './command-hash-object'
 import { catFile, CatFileMode } from './command-cat-file'
 import { lsFiles } from './command-ls-files'
 import { updateIndex, UpdateIndexMode } from './command-update-index'
+import { reset } from './command-reset'
 import { writeTree } from './command-write-tree'
 import { commitTree } from './command-commit-tree'
 import { commit } from './command-commit'
@@ -144,8 +145,7 @@ program
       return
     }
 
-    const mode = UpdateIndexMode.Remove
-    updateIndex(null, path, mode)
+    reset(path)
   })
 
 program
