@@ -1,5 +1,5 @@
 import * as program from 'commander'
-import * as util from './util'
+import { mapStringToObjectID, onlyOneIsTrue, repoDoesNotExist } from './util'
 import { ObjectID } from './object-id'
 
 import { init } from './command-init'
@@ -27,7 +27,7 @@ program
   .arguments('<path>')
   .option('--write')
   .action((path, options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -45,7 +45,7 @@ program
   .option('--exit')
   .option('--print')
   .action((object, options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -55,8 +55,8 @@ program
     const showPretty = (options.print === true)
     const exit       = (options.exit === true)
 
-    if (util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
-      const id = util.mapStringToObjectID(object)
+    if (onlyOneIsTrue(showType, showSize, showPretty, exit)) {
+      const id = mapStringToObjectID(object)
       const mode =
           (showType)   ? CatFileMode.Type :
           (showSize)   ? CatFileMode.Size :
@@ -72,7 +72,7 @@ program
 program
   .command('ls-files')
   .action(() => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -86,7 +86,7 @@ program
   .option('--add <object>')
   .option('--remove')
   .action((name, options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -95,7 +95,7 @@ program
     const hasRemove = options.remove === true
 
     if (hasAdd && hasRemove === false) {
-      const id   = util.mapStringToObjectID(options.add)
+      const id   = mapStringToObjectID(options.add)
       const mode = UpdateIndexMode.Add
       updateIndex(id, name, mode)
     } else if (hasAdd === false && hasRemove) {
@@ -111,7 +111,7 @@ program
   .option('--prefix <prefix>')
   .option('--missing-ok')
   .action((options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -125,7 +125,7 @@ program
   .command('add')
   .arguments('<path>')
   .action((path, options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -139,7 +139,7 @@ program
   .command('reset')
   .arguments('<path>')
   .action((path, options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -155,19 +155,19 @@ program
   .option('--author <author>')
   .option('--message <message>')
   .action((tree, options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
 
-    const id         = util.mapStringToObjectID(tree)
+    const id         = mapStringToObjectID(tree)
     const hasParents = (typeof options.parent === 'string')
     const hasAuthor  = (typeof options.author === 'string')
     const hasMessage = (typeof options.message === 'string')
 
     if (hasAuthor && hasMessage) {
       const parents = ((hasParents) ? options.parent.split(',') : []).map((arg) => {
-        return util.mapStringToObjectID(arg)
+        return mapStringToObjectID(arg)
       }) as ObjectID[]
       const author  = options.author
       const message = options.message
@@ -184,7 +184,7 @@ program
   .option('--author <author>')
   .option('--message <message>')
   .action((options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -206,7 +206,7 @@ program
 program
   .command('status')
   .action((options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
@@ -217,7 +217,7 @@ program
 program
   .command('log')
   .action((options = {}) => {
-    if (util.repoDoesNotExist()) {
+    if (repoDoesNotExist()) {
       console.error('directory not a TinyGit repository')
       return
     }
