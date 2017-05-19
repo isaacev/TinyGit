@@ -3,6 +3,7 @@ import * as util from './util'
 import * as commands from './commands'
 import { ObjectID } from './object-id'
 
+import { init } from './command-init'
 import { hashObject } from './command-hash-object'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
@@ -12,11 +13,9 @@ program
 
 program
   .command('init')
-  .action(commands.init.bind(null, (err) => {
-    if (err) {
-      console.error(err.message)
-    }
-  }))
+  .action((options = {}) => {
+    init()
+  })
 
 program
   .command('hash-object')

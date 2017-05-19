@@ -8,18 +8,6 @@ import { TinyIndex } from './tiny-index'
 import { TinyCommit } from './tiny-commit'
 import { ObjectID } from './object-id'
 
-export type InitCallback = (err: Error) => void
-export function init (done: InitCallback) {
-  try {
-    mkdirSync(util.repoDirpath())
-  } catch (err) {
-    throw new Error('failed to initialize repository')
-  }
-
-  io.writeBranchSync('master')
-  io.writeHeadSync('master')
-}
-
 export enum CatFileMode { Type, Size, Pretty, Exit }
 export function catFileSync (id: ObjectID, mode: CatFileMode): string {
   let obj = io.readObjectSync(id)
