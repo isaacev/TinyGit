@@ -137,3 +137,14 @@ export function readHeadSync (): string {
     throw new Error(format('failed to read HEAD `%s`', filepath))
   }
 }
+
+export function readLastCommit (): TinyCommit {
+  const currentBranch = readHeadSync()
+  const lastCommitId  = readBranchSync(currentBranch)
+
+  if (lastCommitId.equals(ObjectID.NULL)) {
+    return null
+  } else {
+    return readObjectSync(lastCommitId) as TinyCommit
+  }
+}
