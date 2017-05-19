@@ -8,22 +8,6 @@ import { TinyIndex } from './tiny-index'
 import { TinyCommit } from './tiny-commit'
 import { ObjectID } from './object-id'
 
-export enum CatFileMode { Type, Size, Pretty, Exit }
-export function catFileSync (id: ObjectID, mode: CatFileMode): string {
-  let obj = io.readObjectSync(id)
-
-  switch (mode) {
-    case CatFileMode.Type:
-      return obj.type()
-    case CatFileMode.Size:
-      return obj.size().toString()
-    case CatFileMode.Pretty:
-      return obj.pretty()
-    default:
-      return ''
-  }
-}
-
 export function lsFilesSync (): string {
   return io.readIndexSync().pretty()
 }

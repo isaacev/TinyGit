@@ -5,6 +5,7 @@ import { ObjectID } from './object-id'
 
 import { init } from './command-init'
 import { hashObject } from './command-hash-object'
+import { catFile, CatFileMode } from './command-cat-file'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
 
@@ -53,12 +54,12 @@ program
     if (util.onlyOneIsTrue(showType, showSize, showPretty, exit)) {
       const id = util.mapStringToObjectID(object)
       const mode =
-          (showType)   ? commands.CatFileMode.Type :
-          (showSize)   ? commands.CatFileMode.Size :
-          (showPretty) ? commands.CatFileMode.Pretty :
-                         commands.CatFileMode.Exit
+          (showType)   ? CatFileMode.Type :
+          (showSize)   ? CatFileMode.Size :
+          (showPretty) ? CatFileMode.Pretty :
+                         CatFileMode.Exit
 
-      console.log(commands.catFileSync(id, mode))
+      console.log(catFile(id, mode))
     } else {
       options.help()
     }
