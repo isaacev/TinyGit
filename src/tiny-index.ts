@@ -20,14 +20,14 @@ export class TinyIndex {
     this._records.push(new TinyTreeRecord(name, id))
   }
 
-  getRecord (name: string): TinyTreeRecord {
+  getId (name: string): ObjectID {
     if (isAbsolute(name)) {
       name = relative(process.cwd(), name)
     }
 
     for (let i = 0; i < this._records.length; i++) {
       if (this._records[i].name() === name) {
-        return this._records[i]
+        return this._records[i].id()
       }
     }
 
