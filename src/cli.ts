@@ -3,7 +3,7 @@ import * as util from './util'
 import * as commands from './commands'
 import { ObjectID } from './object-id'
 
-import { logSync as log } from './command-log'
+import { log } from './command-log'
 
 program
   .version('0.2.0')

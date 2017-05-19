@@ -3,7 +3,7 @@ import * as io from './io'
 import { ObjectID } from './object-id'
 import { TinyCommit } from './tiny-commit'
 
-export function logSync (): string {
+export function log (): string {
   let commitStream = [] as TinyCommit[]
   const currentBranch = io.readHeadSync()
   const latestCommitId = io.readBranchSync(currentBranch)
