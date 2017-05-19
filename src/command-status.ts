@@ -1,7 +1,7 @@
 import { format } from 'util'
 import { join, normalize, parse, resolve } from 'path'
 import { existsSync, readdirSync, statSync } from 'fs'
-import { readIndexSync, readObjectSync, readBranchSync, readHeadSync } from './io'
+import { readIndexSync, readLastCommit } from './io'
 import { dirParents } from './util'
 import { ObjectID } from './object-id'
 import { TinyIndex } from './tiny-index'
@@ -11,12 +11,8 @@ import { hashObject } from './command-hash-object'
 enum Status { Added, Modified, Deleted, Untracked, None }
 
 export function status (): string {
-  const index         = readIndexSync()
-  const currentBranch = readHeadSync()
-  const lastCommitId  = readBranchSync(currentBranch)
-  const lastCommit    = (lastCommitId.equals(ObjectID.NULL) === false)
-    ? readObjectSync(lastCommitId) as TinyCommit
-    : null
+  const index      = readIndexSync()
+  const lastCommit = readLastCommit()
 
   // files in index but not in commit
   const staged = index.reduce((accum, record) => {
