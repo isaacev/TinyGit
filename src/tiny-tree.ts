@@ -57,6 +57,16 @@ export class TinyTree implements TinyObject {
     this._records = records
   }
 
+  lookup (name: string): ObjectID {
+    for (let i = 0; i < this._records.length; i++) {
+      if (this._records[i].name() === name) {
+        return this._records[i].id()
+      }
+    }
+
+    return null
+  }
+
   type (): string {
     return 'tree'
   }
