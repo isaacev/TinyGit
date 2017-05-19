@@ -1,5 +1,8 @@
 import { format } from 'util'
+import * as io from './io'
+import { isAbsolute, parse, relative, sep } from 'path'
 import { hashString } from './util'
+import { TinyTree } from './tiny-tree'
 import { TinyObject } from './tiny-object'
 import { ObjectID } from './object-id'
 
@@ -30,6 +33,37 @@ export class TinyCommit implements TinyObject {
 
   public message (): string {
     return this._message
+  }
+
+  public lookupPath (path: string): ObjectID {
+    if (isAbsolute(path)) {
+      path = relative(process.cwd(), path)
+    }
+
+    const { dir, base } = parse(path)
+    const dirs = dir.split(sep)
+
+    let currTree = io.readObjectSync(this._tree) as TinyTree
+
+    if (dir !== '') {
+      for (let dir of dirs) {
+        const nextTree = currTree.lookup(dir)
+
+        if (nextTree === null) {
+          return null
+        } else {
+          currTree = io.readObjectSync(nextTree) as TinyTree
+        }
+      }
+    }
+
+    const fileId = currTree.lookup(base)
+
+    if (fileId === null) {
+      return null
+    } else {
+      return fileId
+    }
   }
 
   public type (): string {
