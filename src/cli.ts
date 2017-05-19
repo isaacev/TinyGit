@@ -3,6 +3,8 @@ import * as util from './util'
 import * as commands from './commands'
 import { ObjectID } from './object-id'
 
+import { logSync as log } from './command-log'
+
 program
   .version('0.2.0')
 
@@ -204,6 +206,16 @@ program
     }
 
     console.log(commands.statusSync().trim())
+
+program
+  .command('log')
+  .action((options = {}) => {
+    if (util.repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
+    console.log(log())
   })
 
 program.parse(process.argv)

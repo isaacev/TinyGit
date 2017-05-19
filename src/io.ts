@@ -99,7 +99,7 @@ export function readBranchSync (branchName: string): ObjectID {
   const filepath = util.branchFilepath(branchName)
 
   try {
-    return new ObjectID(readFileSync(filepath, 'utf8'))
+    return new ObjectID(readFileSync(filepath, 'utf8').trim())
   } catch (err) {
     throw new Error(format('failed to read branch `%s`', branchName))
   }

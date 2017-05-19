@@ -7,7 +7,7 @@ export class ObjectID {
   private _suffix : string
 
   constructor (hash: string) {
-    if (/[0-9a-f]{40}/i.test(hash) === false) {
+    if (/^[0-9a-f]{40}$/i.test(hash) === false) {
       throw new Error(format('cannot use `%s` as object ID', hash))
     }
 
