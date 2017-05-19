@@ -6,6 +6,7 @@ import { ObjectID } from './object-id'
 import { init } from './command-init'
 import { hashObject } from './command-hash-object'
 import { catFile, CatFileMode } from './command-cat-file'
+import { lsFiles } from './command-ls-files'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
 
@@ -73,7 +74,7 @@ program
       return
     }
 
-    console.log(commands.lsFilesSync())
+    console.log(lsFiles())
   })
 
 program

@@ -8,10 +8,6 @@ import { TinyIndex } from './tiny-index'
 import { TinyCommit } from './tiny-commit'
 import { ObjectID } from './object-id'
 
-export function lsFilesSync (): string {
-  return io.readIndexSync().pretty()
-}
-
 export enum UpdateIndexMode { Add, Remove }
 export function updateIndexSync (id: ObjectID, name: string, mode: UpdateIndexMode): void {
   const index = io.readIndexSync()
