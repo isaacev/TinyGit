@@ -8,6 +8,7 @@ import { hashObject } from './command-hash-object'
 import { catFile, CatFileMode } from './command-cat-file'
 import { lsFiles } from './command-ls-files'
 import { updateIndex, UpdateIndexMode } from './command-update-index'
+import { writeTree } from './command-write-tree'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
 
@@ -116,7 +117,7 @@ program
 
     const prefix    = (typeof options.prefix !== 'string') ? '' : options.prefix
     const missingOk = (options.missingOk === true)
-    console.log(commands.writeTreeSync(prefix, missingOk).toString())
+    console.log(writeTree(prefix, missingOk).toString())
   })
 
 program
