@@ -13,6 +13,7 @@ import { commitTree } from './command-commit-tree'
 import { commit } from './command-commit'
 import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
+import { showRef } from './command-show-ref'
 
 program
   .version('0.2.0')
@@ -223,6 +224,17 @@ program
     }
 
     console.log(log())
+  })
+
+program
+  .command('show-ref')
+  .action((options = {}) => {
+    if (repoDoesNotExist()) {
+      console.error('directory not a TinyGit repository')
+      return
+    }
+
+    console.log(showRef())
   })
 
 program.parse(process.argv)
