@@ -17,3 +17,10 @@ describe('util#repoDirpath', () => {
     expect(val).to.equal(path.join(process.cwd(), '.tinygit'))
   })
 })
+
+describe('util#indexFilepath', () => {
+  it('should return an absolute path to a local repo index file', () => {
+    const val = util.indexFilepath()
+    expect(val).to.equal(path.join(process.cwd(), '.tinygit/index'))
+  })
+})
