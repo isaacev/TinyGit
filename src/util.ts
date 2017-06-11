@@ -52,12 +52,12 @@ export function indexFilepath (): string {
   return join(repoDirpath(), 'index')
 }
 
-export function branchDirpath (): string {
+export function refsDirpath (): string {
   return join(repoDirpath(), 'refs')
 }
 
 export function branchFilepath (name: string): string {
-  return join(branchDirpath(), name)
+  return join(refsDirpath(), name)
 }
 
 export function headFilepath (): string {

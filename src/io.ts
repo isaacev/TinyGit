@@ -92,7 +92,7 @@ export function readIndexSync (): TinyIndex {
 }
 
 export function writeBranchSync (branchName: string, id: ObjectID = ObjectID.NULL): void {
-  const dirpath  = util.branchDirpath()
+  const dirpath  = util.refsDirpath()
   const filepath = util.branchFilepath(branchName)
 
   try {
