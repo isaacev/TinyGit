@@ -31,3 +31,49 @@ describe('util#refsDirpath', () => {
     expect(val).to.equal(path.join(process.cwd(), '.tinygit/refs'))
   })
 })
+
+describe('util#onlyOneIsTrue', () => {
+  it('should return false given no arguments', () => {
+    expect(util.onlyOneIsTrue()).to.equal(false)
+  })
+
+  it('should return true when given only true', () => {
+    expect(util.onlyOneIsTrue(true)).to.equal(true)
+  })
+
+  it('should return false when given only false', () => {
+    expect(util.onlyOneIsTrue(false)).to.equal(false)
+  })
+
+  it('should return false when given only a string', () => {
+    expect(util.onlyOneIsTrue('true')).to.equal(false)
+  })
+
+  it('should return false when given null', () => {
+    expect(util.onlyOneIsTrue(null)).to.equal(false)
+  })
+
+  it('should return false when given undefined', () => {
+    expect(util.onlyOneIsTrue(undefined)).to.equal(false)
+  })
+
+  it('should return false when given true and true', () => {
+    expect(util.onlyOneIsTrue(true, true)).to.equal(false)
+  })
+
+  it('should return false when given false and false', () => {
+    expect(util.onlyOneIsTrue(false, false)).to.equal(false)
+  })
+
+  it('should return true when given true and false', () => {
+    expect(util.onlyOneIsTrue(true, false)).to.equal(true)
+  })
+
+  it('should return false when given many mixed values but no true', () => {
+    expect(util.onlyOneIsTrue(false, 'true', 1, 0, undefined, null)).to.equal(false)
+  })
+
+  it('should return true when given many mixed values but only one true', () => {
+    expect(util.onlyOneIsTrue(false, true, 1, 0, undefined, null)).to.equal(true)
+  })
+})
