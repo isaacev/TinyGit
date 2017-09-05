@@ -8,13 +8,18 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register test/test.ts"
+    "test": "nyc mocha -r ts-node/register test/test.ts"
   },
   "bin": {
     "tiny": "./build/bin.js"
   },
   "author": "Isaac Evavold <ievavold@wisc.edu>",
   "license": "MIT",
+  "nyc": {
+    "extension": [
+      ".ts"
+    ]
+  },
   "devDependencies": {
     "@types/chai": "^3.5.2",
     "@types/commander": "^2.9.0",
@@ -24,6 +29,7 @@
     "@types/sha1": "^1.1.0",
     "chai": "^3.5.0",
     "mocha": "^3.4.1",
+    "nyc": "^11.1.0",
     "ts-node": "^3.0.4",
     "typescript": "^2.4.2"
   },
