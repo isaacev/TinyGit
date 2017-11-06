@@ -11,7 +11,6 @@ import { reset } from './command-reset'
 import { writeTree } from './command-write-tree'
 import { commitTree } from './command-commit-tree'
 import { commit } from './command-commit'
-import { status as importedStatusSync } from './command-status'
 import { log } from './command-log'
 import { showRef } from './command-show-ref'
 
@@ -202,17 +201,6 @@ program
     } else {
       options.help()
     }
-  })
-
-program
-  .command('status')
-  .action((options = {}) => {
-    if (repoDoesNotExist()) {
-      console.error('directory not a TinyGit repository')
-      return
-    }
-
-    process.stdout.write(importedStatusSync())
   })
 
 program
