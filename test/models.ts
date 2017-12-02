@@ -2,6 +2,7 @@ import 'mocha'
 import { expect } from 'chai'
 
 import { ID } from '../src/models/object'
+import { Commit } from '../src/models/commit'
 import { Tree } from '../src/models/tree'
 import { Blob } from '../src/models/blob'
 
@@ -99,6 +100,68 @@ describe('models', () => {
       it('should be same as #whole()', () => {
         const id = new ID(repeat('a', 40))
         expect(id.toString()).to.equal(id.whole())
+      })
+    })
+  })
+
+  describe('commit', () => {
+    describe('#id', () => {
+      it('should return the id', () => {
+        const i = ID.NULL
+        const c = new Commit(i, i, [], '', '')
+        expect(c.id()).to.equal(i)
+      })
+    })
+
+    describe('#type', () => {
+      it('should return "commit"', () => {
+        const i = ID.NULL
+        const c = new Commit(i, i, [], '', '')
+        expect(c.type()).to.equal('commit')
+      })
+    })
+
+    describe('#size', () => {
+      it('should return the number of characters in commit contents', () => {
+        const i = new ID(repeat('ef12', 10))
+        const t = new ID(repeat('abcd', 10))
+        const p = new ID(repeat('1f2e', 10))
+        const a = 'the author'
+        const m = 'the message'
+        const c = new Commit(i, t, [p], a, m)
+        expect(c.size()).to.equal(125)
+      })
+    })
+
+    describe('#encode', () => {
+      it('should return the fully encoded commit', () => {
+        const i = new ID(repeat('ef12', 10))
+        const t = new ID(repeat('abcd', 10))
+        const p = new ID(repeat('1f2e', 10))
+        const a = 'the author'
+        const m = 'the message'
+        const c = new Commit(i, t, [p], a, m)
+        expect(c.encode()).to.equal('commit 125\0'
+          + 'tree abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd\n'
+          + 'parent 1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e\n'
+          + 'author the author\n\n'
+          + 'the message\n')
+      })
+    })
+
+    describe('#contents', () => {
+      it('should return formatted tree data', () => {
+        const i = new ID(repeat('ef12', 10))
+        const t = new ID(repeat('abcd', 10))
+        const p = new ID(repeat('1f2e', 10))
+        const a = 'the author'
+        const m = 'the message'
+        const c = new Commit(i, t, [p], a, m)
+        expect(c.contents()).to.equal(''
+          + 'tree abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd\n'
+          + 'parent 1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e\n'
+          + 'author the author\n\n'
+          + 'the message\n')
       })
     })
   })
