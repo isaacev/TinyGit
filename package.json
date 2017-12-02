@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "nyc mocha -r ts-node/register test/test.ts"
+    "test": "nyc mocha -r ts-node/register test/*.ts"
   },
   "bin": {
     "tiny": "./build/bin.js"
