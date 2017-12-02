@@ -2,6 +2,7 @@ import 'mocha'
 import { expect } from 'chai'
 
 import { ID } from '../src/models/object'
+import { Blob } from '../src/models/blob'
 
 describe('models', () => {
   describe('ID', () => {
@@ -97,6 +98,48 @@ describe('models', () => {
       it('should be same as #whole()', () => {
         const id = new ID(repeat('a', 40))
         expect(id.toString()).to.equal(id.whole())
+      })
+    })
+  })
+
+  describe('blob', () => {
+    describe('#id', () => {
+      it('should return the id', () => {
+        const i = ID.NULL
+        const b = new Blob(i, 'foobar')
+        expect(b.id()).to.equal(i)
+      })
+    })
+
+    describe('#type', () => {
+      it('should return "blob"', () => {
+        const i = ID.NULL
+        const b = new Blob(i, 'foobar')
+        expect(b.type()).to.equal('blob')
+      })
+    })
+
+    describe('#size', () => {
+      it('should return the number of characters in blob data', () => {
+        const i = ID.NULL
+        const b = new Blob(i, 'foobar')
+        expect(b.size()).to.equal('foobar'.length)
+      })
+    })
+
+    describe('#encode', () => {
+      it('should return the fully encoded blob', () => {
+        const i = ID.NULL
+        const b = new Blob(i, 'foobar')
+        expect(b.encode()).to.equal('blob 6\0foobar')
+      })
+    })
+
+    describe('#contents', () => {
+      it('should return raw blob data', () => {
+        const i = ID.NULL
+        const b = new Blob(i, 'foobar')
+        expect(b.contents()).to.equal('foobar')
       })
     })
   })
