@@ -5,15 +5,15 @@ import { ID } from '../src/models/object'
 import { Blob } from '../src/models/blob'
 
 describe('models', () => {
-  describe('ID', () => {
-    function repeat (c: string, n: number) {
-      let rep = ''
-      while (0 < n--) {
-        rep += c
-      }
-      return rep
+  function repeat (c: string, n: number) {
+    let rep = ''
+    while (0 < n--) {
+      rep += c
     }
+    return rep
+  }
 
+  describe('ID', () => {
     describe('constructor', () => {
       it('should reject badly formatted hashes', () => {
         expect(() => new ID(undefined)).to.throw(/cannot use/)
