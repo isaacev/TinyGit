@@ -2,6 +2,7 @@ import 'mocha'
 import { expect } from 'chai'
 
 import { ID } from '../src/models/object'
+import { Tree } from '../src/models/tree'
 import { Blob } from '../src/models/blob'
 
 describe('models', () => {
@@ -98,6 +99,61 @@ describe('models', () => {
       it('should be same as #whole()', () => {
         const id = new ID(repeat('a', 40))
         expect(id.toString()).to.equal(id.whole())
+      })
+    })
+  })
+
+  describe('tree', () => {
+    describe('#id', () => {
+      it('should return the id', () => {
+        const i = ID.NULL
+        const t = new Tree(i, [])
+        expect(t.id()).to.equal(i)
+      })
+    })
+
+    describe('#type', () => {
+      it('should return "tree"', () => {
+        const i = ID.NULL
+        const t = new Tree(i, [])
+        expect(t.type()).to.equal('tree')
+      })
+    })
+
+    describe('#size', () => {
+      it('should return the number of characters in tree contents', () => {
+        const i = ID.NULL
+        const t = new Tree(i, [
+          {name: 'foo', id: new ID(repeat('abcd', 10))},
+          {name: 'bar', id: new ID(repeat('abcd', 10))},
+        ])
+        expect(t.size()).to.equal(t.contents().length)
+      })
+    })
+
+    describe('#encode', () => {
+      it('should return the fully encoded tree', () => {
+        const i = ID.NULL
+        const t = new Tree(i, [
+          {name: 'foo', id: new ID(repeat('abcd', 10))},
+          {name: 'bar', id: new ID(repeat('abcd', 10))},
+        ])
+        expect(t.encode()).to.equal('tree 88\0'
+          + 'foo\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+          + 'bar\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+      })
+    })
+
+    describe('#contents', () => {
+      it('should return formatted tree data', () => {
+        const i = ID.NULL
+        const t = new Tree(i, [
+          {name: 'foo', id: new ID(repeat('abcd', 10))},
+          {name: 'bar', id: new ID(repeat('abcd', 10))},
+        ])
+        expect(t.contents()).to.equal(''
+          + 'foo\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+          + 'bar\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
       })
     })
   })
