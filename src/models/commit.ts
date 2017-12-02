@@ -22,6 +22,6 @@ export class Commit implements Object {
   public encode ()   : string   { return fmt('commit %d\0%s', this.size(), this.contents()) }
   public contents () : string   {
     const p = this._parents.map(p => fmt('parent %s\n', p)).join('')
-    return fmt('tree %s\n%sauthor %s\n\n%s\n', this._tree, p)
+    return fmt('tree %s\n%sauthor %s\n\n%s\n', this._tree, p, this._author, this._message)
   }
 }
