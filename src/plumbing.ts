@@ -20,11 +20,7 @@ export const hashObject = (filepath: string, write: boolean = false): ID => {
 
   const blob = new Blob(data)
   if (write) {
-    try {
-      io.writeObject(blob)
-    } catch (err) {
-      throw new Error(fmt('failed to write blob %s', blob.id()))
-    }
+    io.writeObject(blob)
   }
 
   return blob.id()
