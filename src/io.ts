@@ -41,3 +41,9 @@ export const readObject = (id: ID): Object => {
       throw new Error(fmt('failed to decode %s', id.toString()))
   }
 }
+
+export const listObjects = (): ID[] => {
+  return fs.readdirSync(path.join(getRepoRoot(), 'objects'))
+    .filter(filename => ID.ish(filename))
+    .map(filename => new ID(filename))
+}
