@@ -40,7 +40,7 @@ export const catFile = (prefix: string): string => {
 
   const match = matches[0]
   const object = io.readObject(match)
-  return object.contents()
+  return object.toString()
 }
 
 export const lsFiles = (): string => {
