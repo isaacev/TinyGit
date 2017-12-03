@@ -11,13 +11,8 @@ export const getRepoRoot = (): string => {
 
 export const writeObject = (obj: Object): ID => {
   const objPath = path.join(getRepoRoot(), 'objects')
-  const prefix = obj.id().prefix()
-  const suffix = obj.id().suffix()
-
-  mkdirp.sync(path.join(objPath, prefix))
-
   try {
-    fs.writeFileSync(path.join(objPath, prefix, suffix), obj.encode())
+    fs.writeFileSync(path.join(objPath, obj.id().whole()), obj.encode())
     return obj.id()
   } catch (err) {
     throw new Error(fmt('failed to write object %s', obj.id.toString()))
