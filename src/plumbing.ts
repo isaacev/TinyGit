@@ -42,3 +42,31 @@ export const catFile = (prefix: string): string => {
   const object = io.readObject(match)
   return object.contents()
 }
+
+export const lsFiles = (): string => {
+  const index = io.readIndex()
+  const files = index.getObjects()
+  files.sort((a, b) => a.name > b.name ? 1 : -1)
+  return files.map(f => fmt('%s %s', f.id.whole(), f.name)).join('\n')
+}
+
+export const addToIndex = (id: ID, name: string): void => {
+  const index = io.readIndex()
+
+  if (index.hasObject(name)) {
+    index.replaceObject(name, id)
+  } else {
+    index.addObject(name, id)
+  }
+
+  io.writeIndex(index)
+}
+
+export const removeFromIndex = (name: string): void => {
+  const index = io.readIndex()
+
+  if (index.hasObject(name)) {
+    index.removeObject(name)
+    io.writeIndex(index)
+  }
+}
