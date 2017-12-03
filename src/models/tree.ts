@@ -19,4 +19,34 @@ export class Tree implements Object {
   public contents () : string {
     return this._children.map(c => fmt('%s\0%s', c.name, c.id)).join('')
   }
+
+  private static decodeChildren (raw: string): TreeChild[] {
+    const pattern = /^([^\0]+)\0([a-f0-9]{40})/i
+    const children = [] as TreeChild[]
+    let left = raw
+    let parsed: RegExpMatchArray = null
+
+    while ((parsed = left.match(pattern)) != null) {
+      left = left.substring(parsed[0].length || 1)
+      children.push({name: parsed[1], id: new ID(parsed[2])})
+    }
+
+    if (left.length > 0) {
+      throw new Error('cannot decode as tree')
+    }
+
+    return children
+  }
+
+  public static decode (raw: string): Tree {
+    const pattern = /^tree \d+\0(.*)$/
+    const parsed = raw.match(pattern)
+
+    if (parsed === null) {
+      throw new Error('cannot decode as tree')
+    }
+
+    const records = Tree.decodeChildren(parsed[1])
+    return new Tree(records)
+  }
 }

@@ -15,4 +15,15 @@ export class Blob implements Object {
   public size ()     : number { return this._data.length }
   public encode ()   : string { return fmt('blob %d\0%s', this.size(), this.contents()) }
   public contents () : string { return this._data }
+
+  public static decode (raw: string): Blob {
+    const pattern = /^blob \d+\0((.|[\r\n])*)$/
+    const parsed = raw.match(pattern)
+
+    if (parsed === null) {
+      throw new Error('cannot decode as blob')
+    }
+
+    return new Blob(parsed[1])
+  }
 }
