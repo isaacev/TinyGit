@@ -1,4 +1,5 @@
 import { format as fmt } from 'util'
+const sha1 = require('sha1')
 
 export class ID {
   private _whole  : string
@@ -42,6 +43,11 @@ export class ID {
   }
 
   public static NULL = new ID('0000000000000000000000000000000000000000')
+
+  public static fromString (data: string): ID {
+    const digest: string = sha1(data).toString()
+    return new ID(digest)
+  }
 }
 
 export interface Object {
