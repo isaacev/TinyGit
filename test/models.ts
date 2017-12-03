@@ -181,8 +181,8 @@ describe('models', () => {
     describe('#size', () => {
       it('should return the number of characters in tree contents', () => {
         const t = new Tree([
-          {name: 'foo', id: new ID(repeat('abcd', 10))},
-          {name: 'bar', id: new ID(repeat('abcd', 10))},
+          {name: 'foo', mode: 'blob', id: new ID(repeat('abcd', 10))},
+          {name: 'bar', mode: 'blob', id: new ID(repeat('abcd', 10))},
         ])
         expect(t.size()).to.equal(t.contents().length)
       })
@@ -191,24 +191,24 @@ describe('models', () => {
     describe('#encode', () => {
       it('should return the fully encoded tree', () => {
         const t = new Tree([
-          {name: 'foo', id: new ID(repeat('abcd', 10))},
-          {name: 'bar', id: new ID(repeat('abcd', 10))},
+          {name: 'foo', mode: 'blob', id: new ID(repeat('abcd', 10))},
+          {name: 'bar', mode: 'tree', id: new ID(repeat('abcd', 10))},
         ])
-        expect(t.encode()).to.equal('tree 88\0'
-          + 'foo\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
-          + 'bar\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+        expect(t.encode()).to.equal('tree 98\0'
+          + 'foo\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+          + 'bar\0tree\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
       })
     })
 
     describe('#contents', () => {
       it('should return formatted tree data', () => {
         const t = new Tree([
-          {name: 'foo', id: new ID(repeat('abcd', 10))},
-          {name: 'bar', id: new ID(repeat('abcd', 10))},
+          {name: 'foo', mode: 'blob', id: new ID(repeat('abcd', 10))},
+          {name: 'bar', mode: 'blob', id: new ID(repeat('abcd', 10))},
         ])
         expect(t.contents()).to.equal(''
-          + 'foo\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
-          + 'bar\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+          + 'foo\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+          + 'bar\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
       })
     })
   })
