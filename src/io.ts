@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import * as mkdirp from 'mkdirp'
 
 import { ID, Object } from './models/object'
+import { Index } from './models/index'
 import { Commit } from './models/commit'
 import { Tree } from './models/tree'
 import { Blob } from './models/blob'
@@ -46,4 +47,20 @@ export const listObjects = (): ID[] => {
   return fs.readdirSync(path.join(getRepoRoot(), 'objects'))
     .filter(filename => ID.ish(filename))
     .map(filename => new ID(filename))
+}
+
+export const readIndex = (): Index => {
+  const indexPath = path.join(getRepoRoot(), 'index')
+  if (fs.existsSync(indexPath) === false) {
+    const index = new Index([])
+    writeIndex(index)
+    return index
+  } else {
+    const raw = fs.readFileSync(indexPath, 'utf8')
+    return Index.decode(raw)
+  }
+}
+
+export const writeIndex = (index: Index): void => {
+  fs.writeFileSync(path.join(getRepoRoot(), 'index'), index.encode(), 'utf8')
 }
