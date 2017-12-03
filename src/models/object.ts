@@ -60,4 +60,5 @@ export interface Object {
   size     (): number // size of contents in bytes
   encode   (): string // metadata prepended to raw contents
   contents (): string // raw contents of object
+  toString (): string // formatted contents of object
 }

@@ -24,6 +24,14 @@ export class Commit implements Object {
     const p = this._parents.map(p => fmt('parent %s\n', p)).join('')
     return fmt('tree %s\n%sauthor %s\n\n%s\n', this._tree, p, this._author, this._message)
   }
+  public toString () : string {
+    let out = ''
+    out += fmt('tree %s\n', this._tree)
+    out += this._parents.reduce((out, p) => out + fmt('parent %s\n', p), '')
+    out += fmt('author %s\n', this._author)
+    out += fmt('\n%s\n', this._message)
+    return out
+  }
 
   public static decode (raw: string): Commit {
     const pattern = /^commit \d+\0/

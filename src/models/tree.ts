@@ -19,6 +19,11 @@ export class Tree implements Object {
   public contents () : string {
     return this._children.map(c => fmt('%s\0%s\0%s', c.name, c.mode, c.id)).join('')
   }
+  public toString () : string {
+    return this._children.map(c => {
+      return fmt('%s %s %s', c.mode, c.id, c.name)
+    }).join('\n')
+  }
 
   private static decodeChildren (raw: string): TreeChild[] {
     const pattern = /^([^\0]+)\0(blob|tree)\0([a-f0-9]{40})/i
