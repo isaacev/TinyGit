@@ -107,40 +107,38 @@ describe('models', () => {
   describe('commit', () => {
     describe('#id', () => {
       it('should return the id', () => {
-        const i = ID.NULL
-        const c = new Commit(i, i, [], '', '')
-        expect(c.id()).to.equal(i)
+        const t = ID.NULL
+        const c = new Commit(t, [], '', '')
+        expect(c.id().toString()).to.equal('f84bcbf33618332cf64f2e6dd867bab18b94a860')
       })
     })
 
     describe('#type', () => {
       it('should return "commit"', () => {
-        const i = ID.NULL
-        const c = new Commit(i, i, [], '', '')
+        const t = ID.NULL
+        const c = new Commit(t, [], '', '')
         expect(c.type()).to.equal('commit')
       })
     })
 
     describe('#size', () => {
       it('should return the number of characters in commit contents', () => {
-        const i = new ID(repeat('ef12', 10))
         const t = new ID(repeat('abcd', 10))
         const p = new ID(repeat('1f2e', 10))
         const a = 'the author'
         const m = 'the message'
-        const c = new Commit(i, t, [p], a, m)
+        const c = new Commit(t, [p], a, m)
         expect(c.size()).to.equal(125)
       })
     })
 
     describe('#encode', () => {
       it('should return the fully encoded commit', () => {
-        const i = new ID(repeat('ef12', 10))
         const t = new ID(repeat('abcd', 10))
         const p = new ID(repeat('1f2e', 10))
         const a = 'the author'
         const m = 'the message'
-        const c = new Commit(i, t, [p], a, m)
+        const c = new Commit(t, [p], a, m)
         expect(c.encode()).to.equal('commit 125\0'
           + 'tree abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd\n'
           + 'parent 1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e\n'
@@ -151,12 +149,11 @@ describe('models', () => {
 
     describe('#contents', () => {
       it('should return formatted tree data', () => {
-        const i = new ID(repeat('ef12', 10))
         const t = new ID(repeat('abcd', 10))
         const p = new ID(repeat('1f2e', 10))
         const a = 'the author'
         const m = 'the message'
-        const c = new Commit(i, t, [p], a, m)
+        const c = new Commit(t, [p], a, m)
         expect(c.contents()).to.equal(''
           + 'tree abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd\n'
           + 'parent 1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e1f2e\n'
@@ -169,24 +166,21 @@ describe('models', () => {
   describe('tree', () => {
     describe('#id', () => {
       it('should return the id', () => {
-        const i = ID.NULL
-        const t = new Tree(i, [])
-        expect(t.id()).to.equal(i)
+        const t = new Tree([])
+        expect(t.id().toString()).to.equal('4b825dc642cb6eb9a060e54bf8d69288fbee4904')
       })
     })
 
     describe('#type', () => {
       it('should return "tree"', () => {
-        const i = ID.NULL
-        const t = new Tree(i, [])
+        const t = new Tree([])
         expect(t.type()).to.equal('tree')
       })
     })
 
     describe('#size', () => {
       it('should return the number of characters in tree contents', () => {
-        const i = ID.NULL
-        const t = new Tree(i, [
+        const t = new Tree([
           {name: 'foo', id: new ID(repeat('abcd', 10))},
           {name: 'bar', id: new ID(repeat('abcd', 10))},
         ])
@@ -196,8 +190,7 @@ describe('models', () => {
 
     describe('#encode', () => {
       it('should return the fully encoded tree', () => {
-        const i = ID.NULL
-        const t = new Tree(i, [
+        const t = new Tree([
           {name: 'foo', id: new ID(repeat('abcd', 10))},
           {name: 'bar', id: new ID(repeat('abcd', 10))},
         ])
@@ -209,8 +202,7 @@ describe('models', () => {
 
     describe('#contents', () => {
       it('should return formatted tree data', () => {
-        const i = ID.NULL
-        const t = new Tree(i, [
+        const t = new Tree([
           {name: 'foo', id: new ID(repeat('abcd', 10))},
           {name: 'bar', id: new ID(repeat('abcd', 10))},
         ])
@@ -224,40 +216,35 @@ describe('models', () => {
   describe('blob', () => {
     describe('#id', () => {
       it('should return the id', () => {
-        const i = ID.NULL
-        const b = new Blob(i, 'foobar')
-        expect(b.id()).to.equal(i)
+        const b = new Blob('foobar')
+        expect(b.id().toString()).to.equal('f6ea0495187600e7b2288c8ac19c5886383a4632')
       })
     })
 
     describe('#type', () => {
       it('should return "blob"', () => {
-        const i = ID.NULL
-        const b = new Blob(i, 'foobar')
+        const b = new Blob('foobar')
         expect(b.type()).to.equal('blob')
       })
     })
 
     describe('#size', () => {
       it('should return the number of characters in blob data', () => {
-        const i = ID.NULL
-        const b = new Blob(i, 'foobar')
+        const b = new Blob('foobar')
         expect(b.size()).to.equal('foobar'.length)
       })
     })
 
     describe('#encode', () => {
       it('should return the fully encoded blob', () => {
-        const i = ID.NULL
-        const b = new Blob(i, 'foobar')
+        const b = new Blob('foobar')
         expect(b.encode()).to.equal('blob 6\0foobar')
       })
     })
 
     describe('#contents', () => {
       it('should return raw blob data', () => {
-        const i = ID.NULL
-        const b = new Blob(i, 'foobar')
+        const b = new Blob('foobar')
         expect(b.contents()).to.equal('foobar')
       })
     })

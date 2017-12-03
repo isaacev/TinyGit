@@ -8,12 +8,12 @@ export class Commit implements Object {
   private _author  : string
   private _message : string
 
-  constructor (id: ID, tree: ID, parents: ID[], author: string, message: string) {
-    this._id      = id
+  constructor (tree: ID, parents: ID[], author: string, message: string) {
     this._tree    = tree
     this._parents = parents
     this._author  = author
     this._message = message
+    this._id      = ID.fromString(this.encode())
   }
 
   public id ()       : ID       { return this._id }

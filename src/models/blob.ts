@@ -5,9 +5,9 @@ export class Blob implements Object {
   private _id   : ID
   private _data : string
 
-  constructor (id: ID, data: string) {
-    this._id = id
+  constructor (data: string) {
     this._data = data
+    this._id   = ID.fromString(this.encode())
   }
 
   public id ()       : ID     { return this._id }

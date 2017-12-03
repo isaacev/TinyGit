@@ -7,9 +7,9 @@ export class Tree implements Object {
   private _id       : ID
   private _children : TreeChild[]
 
-  constructor (id: ID, children: TreeChild[]) {
-    this._id       = id
+  constructor (children: TreeChild[]) {
     this._children = children
+    this._id       = ID.fromString(this.encode())
   }
 
   public id ()       : ID     { return this._id }
