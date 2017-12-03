@@ -16,6 +16,13 @@ program
     console.log(id.toString())
   }))
 
+program
+  .command('cat-file')
+  .arguments('<object>')
+  .action(errHandler(prefix => {
+    console.log(plumbing.catFile(prefix))
+  }))
+
 program.parse(process.argv)
 
 function errHandler (action) {
