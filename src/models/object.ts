@@ -8,7 +8,7 @@ export class ID {
   private _suffix : string
 
   constructor (hash: string) {
-    if (/^[0-9a-f]{40}$/i.test(hash) === false) {
+    if (ID.ish(hash) === false) {
       throw new Error(fmt('cannot use `%s` as object ID', hash))
     }
 
@@ -47,6 +47,10 @@ export class ID {
   public static fromString (data: string): ID {
     const digest: string = sha1(data).toString()
     return new ID(digest)
+  }
+
+  public static ish (maybe: string): boolean {
+    return /^[0-9a-f]{40}$/i.test(maybe)
   }
 }
 
