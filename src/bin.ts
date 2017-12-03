@@ -32,7 +32,7 @@ program
 
 program
   .command('update-index')
-  .option('--add [object]', 'if file not in index, add it to the index')
+  .option('--add <object>', 'if file not in index, add it to the index')
   .option('--remove', 'if file is in index, remove it from the index')
   .arguments('<path>')
   .action(errHandler((path, options={add: false, remove: false}) => {
