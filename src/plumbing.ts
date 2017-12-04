@@ -4,6 +4,7 @@ import * as fs from 'fs'
 
 import * as io from './io'
 import { ID } from './models/object'
+import { Tree, TreeChild } from './models/tree'
 import { Blob } from './models/blob'
 
 export const hashObject = (filepath: string, write: boolean = false): ID => {

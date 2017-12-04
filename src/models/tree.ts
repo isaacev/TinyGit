@@ -1,7 +1,7 @@
 import { format as fmt } from 'util'
 import { ID, Object } from './object'
 
-type TreeChild = { name: string, mode: 'blob' | 'tree', id: ID }
+export type TreeChild = { name: string, mode: 'blob' | 'tree', id: ID }
 
 export class Tree implements Object {
   private _id       : ID
