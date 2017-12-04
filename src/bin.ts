@@ -4,6 +4,7 @@ import { format as fmt } from 'util'
 import * as program from 'commander'
 
 import * as plumbing from './plumbing'
+import * as porcelain from './porcelain'
 import { ID } from './models/object'
 
 program
@@ -92,6 +93,13 @@ program
     plumbing.showRef().forEach(ref => {
       console.log(fmt('%s %s', ref.pointer, ref.name))
     })
+  }))
+
+program
+  .command('add')
+  .arguments('<filepath>')
+  .action(errHandler(filepath => {
+    porcelain.add(filepath)
   }))
 
 program.parse(process.argv)
