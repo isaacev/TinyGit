@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+import { format as fmt } from 'util'
 import * as program from 'commander'
 
 import * as plumbing from './plumbing'
@@ -76,6 +77,21 @@ program
     const treeID = new ID(tree)
     const id = plumbing.commitTree(treeID, parents, author, message)
     console.log(id.toString())
+  }))
+
+program
+  .command('update-ref')
+  .arguments('<name> <pointer>')
+  .action(errHandler((name, pointer) => {
+    plumbing.updateRef(name, new ID(pointer))
+  }))
+
+program
+  .command('show-ref')
+  .action(errHandler(() => {
+    plumbing.showRef().forEach(ref => {
+      console.log(fmt('%s %s', ref.pointer, ref.name))
+    })
   }))
 
 program.parse(process.argv)
