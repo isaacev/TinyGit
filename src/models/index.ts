@@ -8,6 +8,11 @@ export class Index {
 
   constructor (objects: IndexObject[]) {
     this._objects = objects
+    this.sortObjects()
+  }
+
+  private sortObjects (): void {
+    this._objects.sort((a, b) => a.name > b.name ? 1 : -1)
   }
 
   public hasObject (name: string): boolean {
@@ -22,6 +27,7 @@ export class Index {
 
   public addObject (name: string, id: ID): void {
     this._objects.push({ id, name })
+    this.sortObjects()
   }
 
   public removeObject (name: string): void {

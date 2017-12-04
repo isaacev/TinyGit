@@ -10,6 +10,11 @@ export class Tree implements Object {
   constructor (children: TreeChild[]) {
     this._children = children
     this._id       = ID.fromString(this.encode())
+    this.sortChildren()
+  }
+
+  private sortChildren (): void {
+    this._children.sort((a, b) => a.name > b.name ? 1 : -1)
   }
 
   public id ()       : ID     { return this._id }

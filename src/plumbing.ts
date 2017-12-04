@@ -48,7 +48,6 @@ export const catFile = (prefix: string): string => {
 export const lsFiles = (): string => {
   const index = io.readIndex()
   const files = index.getObjects()
-  files.sort((a, b) => a.name > b.name ? 1 : -1)
   return files.map(f => fmt('%s %s', f.id.whole(), f.name)).join('\n')
 }
 
@@ -102,7 +101,6 @@ export const writeTree = (prefix: string): ID => {
     }
   }, [] as TreeChild[])
 
-  children.sort((a, b) => a.name > b.name ? 1 : -1)
   return io.writeObject(new Tree(children))
 }
 
