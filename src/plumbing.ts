@@ -4,6 +4,7 @@ import * as fs from 'fs'
 
 import * as io from './io'
 import { ID } from './models/object'
+import { Commit } from './models/commit'
 import { Tree, TreeChild } from './models/tree'
 import { Blob } from './models/blob'
 
@@ -103,4 +104,10 @@ export const writeTree = (prefix: string): ID => {
 
   children.sort((a, b) => a.name > b.name ? 1 : -1)
   return io.writeObject(new Tree(children))
+}
+
+export const commitTree = (tree: ID, parents: ID[], author: string, message: string): ID => {
+  const commit = new Commit(tree, parents, author, message)
+  io.writeObject(commit)
+  return commit.id()
 }

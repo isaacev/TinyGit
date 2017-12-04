@@ -51,6 +51,33 @@ program
     console.log(id.toString())
   }))
 
+program
+  .command('commit-tree')
+  .option('--parents <parents>')
+  .option('--author <author>')
+  .option('--message <message>')
+  .arguments('<tree>')
+  .action(errHandler((tree, options ) => {
+    let parents: ID[] = []
+    if (options.parents) {
+      parents = options.parents.split(',').map(p => new ID(p))
+    }
+
+    let author: string = null
+    if (options.author) {
+      author = options.author
+    }
+
+    let message: string = null
+    if (options.message) {
+      message = options.message
+    }
+
+    const treeID = new ID(tree)
+    const id = plumbing.commitTree(treeID, parents, author, message)
+    console.log(id.toString())
+  }))
+
 program.parse(process.argv)
 
 function errHandler (action) {
