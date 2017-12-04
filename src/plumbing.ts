@@ -111,3 +111,11 @@ export const commitTree = (tree: ID, parents: ID[], author: string, message: str
   io.writeObject(commit)
   return commit.id()
 }
+
+export const updateRef = (name: string, pointer: ID): void => {
+  io.writeRef(name, pointer)
+}
+
+export const showRef = (): {name: string, pointer: ID}[] => {
+  return io.listRefs()
+}

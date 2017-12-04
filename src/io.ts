@@ -64,3 +64,27 @@ export const readIndex = (): Index => {
 export const writeIndex = (index: Index): void => {
   fs.writeFileSync(path.join(getRepoRoot(), 'index'), index.encode(), 'utf8')
 }
+
+export const readRef = (name: string): ID => {
+  const refsPath = path.join(getRepoRoot(), 'refs')
+  if (fs.existsSync(refsPath) === false) {
+    writeRef(name, ID.NULL)
+    return ID.NULL
+  } else {
+    const raw = fs.readFileSync(refsPath, 'utf8')
+    return new ID(raw)
+  }
+}
+
+export const writeRef = (name: string, pointer: ID): void => {
+  fs.writeFileSync(path.join(getRepoRoot(), 'refs', name), pointer.whole(), 'utf8')
+}
+
+export const listRefs = (): {name: string, pointer: ID}[] => {
+  const refsPath = path.join(getRepoRoot(), 'refs')
+  return fs.readdirSync(refsPath)
+    .map(filename => {
+      const raw = fs.readFileSync(path.join(refsPath, filename), 'utf8')
+      return {name: filename, pointer: new ID(raw)}
+    })
+}
