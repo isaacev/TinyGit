@@ -66,7 +66,7 @@ export const writeIndex = (index: Index): void => {
 }
 
 export const readRef = (name: string): ID => {
-  const refsPath = path.join(getRepoRoot(), 'refs')
+  const refsPath = path.join(getRepoRoot(), 'refs', name)
   if (fs.existsSync(refsPath) === false) {
     writeRef(name, ID.NULL)
     return ID.NULL
