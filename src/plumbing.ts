@@ -53,11 +53,12 @@ export const lsFiles = (): string => {
 
 export const addToIndex = (id: ID, name: string): void => {
   const index = io.readIndex()
+  const filepath = path.normalize(name)
 
-  if (index.hasObject(name)) {
-    index.replaceObject(name, id)
+  if (index.hasObject(filepath)) {
+    index.replaceObject(filepath, id)
   } else {
-    index.addObject(name, id)
+    index.addObject(filepath, id)
   }
 
   io.writeIndex(index)
