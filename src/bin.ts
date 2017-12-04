@@ -102,6 +102,24 @@ program
     porcelain.add(filepath)
   }))
 
+program
+  .command('commit')
+  .option('--author <author>')
+  .option('--message <message>')
+  .action(errHandler((options) => {
+    let author: string = null
+    if (options.author) {
+      author = options.author
+    }
+
+    let message: string = null
+    if (options.message) {
+      message = options.message
+    }
+
+    porcelain.commit(author, message)
+  }))
+
 program.parse(process.argv)
 
 function errHandler (action) {
