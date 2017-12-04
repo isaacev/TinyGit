@@ -43,6 +43,14 @@ program
     }
   }))
 
+program
+  .command('write-tree')
+  .option('--prefix <prefix>')
+  .action(errHandler((options={prefix: ''}) => {
+    const id = plumbing.writeTree(options.prefix || '')
+    console.log(id.toString())
+  }))
+
 program.parse(process.argv)
 
 function errHandler (action) {

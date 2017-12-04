@@ -71,3 +71,36 @@ export const removeFromIndex = (name: string): void => {
     io.writeIndex(index)
   }
 }
+
+export const writeTree = (prefix: string): ID => {
+  const normal = path.normalize(prefix)
+  const index = io.readIndex()
+  const files = index.getObjects()
+  const knownDirs = []
+  const children = files.reduce((children, f) => {
+    const relative = path.relative(normal, f.name)
+    const dirname = path.dirname(relative)
+    if (dirname === '.') {
+      return children.concat({
+        name: relative,
+        mode: 'blob',
+        id:   f.id,
+      })
+    } else {
+      const childDir = dirname.split(path.sep)[0]
+      if (childDir !== '..' && knownDirs.indexOf(childDir) === -1) {
+        knownDirs.push(childDir)
+        return children.concat({
+          name: childDir,
+          mode: 'tree',
+          id:   writeTree(path.join(normal, childDir)),
+        })
+      } else {
+        return children
+      }
+    }
+  }, [] as TreeChild[])
+
+  children.sort((a, b) => a.name > b.name ? 1 : -1)
+  return io.writeObject(new Tree(children))
+}
