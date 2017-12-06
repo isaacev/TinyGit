@@ -129,6 +129,14 @@ program
     porcelain.commit(author, message)
   }))
 
+program
+  .command('status')
+  .action(errHandler(() => {
+    porcelain.status().forEach(diff => {
+      console.log(fmt('%s %s', diff.status[0].toUpperCase(), diff.name))
+    })
+  }))
+
 program.parse(process.argv)
 
 function errHandler (action) {
