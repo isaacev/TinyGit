@@ -96,6 +96,15 @@ program
   }))
 
 program
+  .command('diff-index')
+  .arguments('<tree>')
+  .action(errHandler(tree => {
+    plumbing.diffIndex(new ID(tree)).forEach(diff => {
+      console.log(fmt('%s %s %s', diff.before, diff.after, diff.name))
+    })
+  }))
+
+program
   .command('add')
   .arguments('<filepath>')
   .action(errHandler(filepath => {

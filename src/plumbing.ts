@@ -3,6 +3,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 import * as io from './io'
+import * as resolve from './resolve'
 import { ID } from './models/object'
 import { Commit } from './models/commit'
 import { Tree, TreeChild } from './models/tree'
@@ -117,4 +118,10 @@ export const updateRef = (name: string, pointer: ID): void => {
 
 export const showRef = (): {name: string, pointer: ID}[] => {
   return io.listRefs()
+}
+
+export const diffIndex = (treeish: ID): resolve.FileDiff[] => {
+  const indexFiles = resolve.indexToFiles()
+  const treeFiles = resolve.treeishToFiles(treeish)
+  return resolve.fileDiffs(treeFiles, indexFiles)
 }
