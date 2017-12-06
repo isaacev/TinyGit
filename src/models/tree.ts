@@ -17,6 +17,8 @@ export class Tree implements Object {
     this._children.sort((a, b) => a.name > b.name ? 1 : -1)
   }
 
+  public children () { return this._children }
+
   public id ()       : ID     { return this._id }
   public type ()     : 'tree' { return 'tree' }
   public size ()     : number { return this.contents().length }

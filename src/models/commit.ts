@@ -16,6 +16,8 @@ export class Commit implements Object {
     this._id      = ID.fromString(this.encode())
   }
 
+  public tree () : ID { return this._tree }
+
   public id ()       : ID       { return this._id }
   public type ()     : 'commit' { return 'commit' }
   public size ()     : number   { return this.contents().length }
