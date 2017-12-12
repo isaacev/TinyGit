@@ -151,6 +151,13 @@ program
     })
   })
 
+program
+  .command('diff')
+  .arguments('<tree> <tree>')
+  .action((tree1, tree2) => {
+    porcelain.diff(new ID(tree1), new ID(tree2))
+  })
+
 program.parse(process.argv)
 
 function errHandler (action) {

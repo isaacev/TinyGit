@@ -2,8 +2,10 @@ import * as mkdirp from 'mkdirp'
 import * as plumbing from './plumbing'
 import * as io from './io'
 import * as resolve from './resolve'
+import * as diffs from './diff'
 import { ID } from './models/object'
 import { Commit } from './models/commit'
+import { Blob } from './models/blob'
 
 export const init = (): void => {
   mkdirp.sync('.tinygit/objects')
@@ -51,4 +53,29 @@ export const log = (): Commit[] => {
     }
   }
   return log
+}
+
+export const diff = (a: ID, b: ID): void => {
+  const aFiles = resolve.treeishToFiles(a)
+  const bFiles = resolve.treeishToFiles(b)
+  const files = resolve.fileDiffs(aFiles, bFiles)
+
+  files.forEach(d => {
+    let before = null
+    let after = null
+
+    if (d.status === 'deleted' || d.status === 'modified') {
+      before = (io.readObject(d.before) as Blob).contents()
+    }
+
+    if (d.status === 'added' || d.status === 'modified') {
+      after = (io.readObject(d.after) as Blob).contents()
+    }
+
+    console.log()
+    console.log(d.name)
+    diffs.strings(before, after).forEach(d => {
+      console.log(d.toString())
+    })
+  })
 }
