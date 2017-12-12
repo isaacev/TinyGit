@@ -32,3 +32,23 @@ export const status = (): resolve.FileDiff[] => {
   const staged  = resolve.fileDiffs(head, index)
   return staged
 }
+
+export const log = (): Commit[] => {
+  const log = [] as Commit[]
+  let head = io.readRef('HEAD')
+  while (head != null) {
+    const commit = io.readObject(head) as Commit
+    log.push(commit)
+
+    if (commit.parents().length === 0) {
+      head = null
+    } else {
+      head = commit.parents()[0]
+
+      if (head.equals(ID.NULL)) {
+        head = null
+      }
+    }
+  }
+  return log
+}

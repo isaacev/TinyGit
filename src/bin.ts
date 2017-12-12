@@ -143,6 +143,14 @@ program
     })
   }))
 
+program
+  .command('log')
+  .action(() => {
+    porcelain.log().forEach(commit => {
+      console.log(fmt('%s (%s) %s', commit.id(), commit.author(), commit.message()))
+    })
+  })
+
 program.parse(process.argv)
 
 function errHandler (action) {
