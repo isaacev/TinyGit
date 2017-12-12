@@ -11,6 +11,12 @@ program
   .version(require('../package.json').version)
 
 program
+  .command('init')
+  .action(errHandler(() => {
+    porcelain.init()
+  }))
+
+program
   .command('hash-object')
   .option('--write', 'writes blob to file', true)
   .arguments('<file>')

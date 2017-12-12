@@ -1,8 +1,16 @@
+import * as mkdirp from 'mkdirp'
 import * as plumbing from './plumbing'
 import * as io from './io'
 import * as resolve from './resolve'
 import { ID } from './models/object'
 import { Commit } from './models/commit'
+
+export const init = (): void => {
+  mkdirp.sync('.tinygit/objects')
+  mkdirp.sync('.tinygit/refs')
+  io.writeRef('HEAD', ID.NULL)
+  io.readIndex()
+}
 
 export const add = (filepath: string): void => {
   const blob = plumbing.hashObject(filepath, true)
