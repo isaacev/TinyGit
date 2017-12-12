@@ -16,7 +16,10 @@ export class Commit implements Object {
     this._id      = ID.fromString(this.encode())
   }
 
-  public tree () : ID { return this._tree }
+  public tree ()    : ID     { return this._tree }
+  public parents () : ID[]   { return this._parents }
+  public author ()  : string { return this._author }
+  public message () : string { return this._message }
 
   public id ()       : ID       { return this._id }
   public type ()     : 'commit' { return 'commit' }
