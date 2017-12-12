@@ -39,6 +39,10 @@ const diffLines = (a: Line[], b: Line[]): DiffLine[] => {
 }
 
 const strToLines = (s: string) => {
+  if (s === null) {
+    return []
+  }
+
   return s.split('\n').map((text, i) => ({ line: i+1, text }))
 }
 
