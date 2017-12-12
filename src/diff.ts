@@ -10,10 +10,24 @@ type Transform = {
   prevY : number
 }
 
-export type DiffLine = {
-  which : 'same' | 'insert' | 'delete'
-  old   : Line
-  new   : Line
+class DiffLine {
+  which  : 'same' | 'insert' | 'delete'
+  before : Line
+  after  : Line
+
+  constructor (which: 'same' | 'insert' | 'delete', before: Line, after: Line) {
+    this.which = which
+    this.before = before
+    this.after = after
+  }
+
+  toString () {
+    const tag = {same: ' ', insert: '+', delete: '-'}[this.which]
+    const bef = (this.before || {line: ''}).line.toString()
+    const aft = (this.after || {line: ''}).line.toString()
+    const txt = (this.before || this.after).text
+    return `${tag} ${bef}\t${aft}\t    ${txt}`
+  }
 }
 
 export const strings = (a: string, b: string) => {
@@ -43,11 +57,11 @@ class Myers {
       const lineB = b[transform.prevY]
 
       if (transform.x === transform.prevX) {
-        diffs.unshift({ which: 'insert', old: null, new: lineB })
+        diffs.unshift(new DiffLine('insert', null, lineB))
       } else if (transform.y === transform.prevY) {
-        diffs.unshift({ which: 'delete', old: lineA, new: null })
+        diffs.unshift(new DiffLine('delete', lineA, null))
       } else {
-        diffs.unshift({ which: 'same', old: lineA, new: lineB })
+        diffs.unshift(new DiffLine('same', lineA, lineB))
       }
 
       return diffs
