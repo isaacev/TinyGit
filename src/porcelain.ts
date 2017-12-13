@@ -1,4 +1,5 @@
 import * as mkdirp from 'mkdirp'
+import * as fs from 'fs'
 import * as path from 'path'
 import * as plumbing from './plumbing'
 import * as io from './io'
@@ -16,8 +17,13 @@ export const init = (): void => {
 }
 
 export const add = (filepath: string): void => {
-  const blob = plumbing.hashObject(filepath, true)
-  plumbing.addToIndex(blob, filepath)
+  const index = io.readIndex()
+  if (fs.existsSync(filepath)) {
+    const blob = plumbing.hashObject(filepath, true)
+    plumbing.addToIndex(blob, filepath)
+  } else if (index.hasObject(filepath)) {
+    plumbing.removeFromIndex(filepath)
+  }
 }
 
 export const reset = (filepath: string): void => {
