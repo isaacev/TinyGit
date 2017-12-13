@@ -145,9 +145,7 @@ program
 program
   .command('status')
   .action(errHandler(() => {
-    porcelain.status().forEach(diff => {
-      console.log(fmt('%s %s', diff.status[0].toUpperCase(), diff.name))
-    })
+    console.log(porcelain.status())
   }))
 
 program

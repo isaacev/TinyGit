@@ -57,12 +57,44 @@ export const commit = (author: string, message: string): void => {
   io.writeRef('HEAD', commit.id())
 }
 
-export const status = (): resolve.FileDiff[] => {
-  const ref     = io.readRef('HEAD')
-  const head    = ref.equals(ID.NULL) ? [] : resolve.treeishToFiles(ref)
-  const index   = resolve.indexToFiles()
-  const staged  = resolve.fileDiffs(head, index)
-  return staged
+export const status = (): string => {
+  const ref      = io.readRef('HEAD')
+  const head     = ref.equals(ID.NULL) ? [] : resolve.treeishToFiles(ref)
+  const index    = resolve.indexToFiles()
+  const staged   = resolve.fileDiffs(head, index)
+  const unstaged = resolve.unstagedToFiles()
+  const names    = staged.concat(unstaged).reduce((names, diff) => {
+    if (names.indexOf(diff.name) === -1) {
+      names.push(diff.name)
+    }
+
+    return names
+  }, [] as string[]).sort()
+
+  return names.map(name => {
+    let s = ' ' as ' ' | 'A' | 'D' | 'M' | '?'
+    let u = ' ' as ' ' | 'A' | 'D' | 'M' | '?'
+
+    staged.some(diff => {
+      if (diff.name === name) {
+        s = diff.status[0].toUpperCase() as 'A' | 'D' | 'M'
+        return true
+      } else {
+        return false
+      }
+    })
+
+    unstaged.some(diff => {
+      if (diff.name === name) {
+        u = diff.status[0].toUpperCase() as 'A' | 'D' | 'M'
+        return true
+      } else {
+        return false
+      }
+    })
+
+    return `${s}${u} ${name}`
+  }).join('\n')
 }
 
 export const log = (): Commit[] => {

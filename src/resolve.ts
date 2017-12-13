@@ -1,8 +1,10 @@
 import * as path from 'path'
+import * as fs from 'fs'
 import { ID } from './models/object'
 import { Commit } from './models/commit'
 import { Tree } from './models/tree'
 import * as io from './io'
+import * as plumbing from './plumbing'
 
 export type NamedBlob = {
   name : string
@@ -96,4 +98,40 @@ export const fileDiffs = (before: NamedBlob[], after: NamedBlob[]): FileDiff[] =
   }, [] as FileDiff[])
 
   return diffs
+}
+
+export const unstagedToFiles = (): FileDiff[] => {
+  const index = io.readIndex()
+  const files = index.getObjects()
+
+  return files.map(f => ({
+    name   : f.name,
+    before : f.id,
+    after  : fs.existsSync(f.name) ? plumbing.hashObject(f.name) : ID.NULL,
+  })).filter(f => {
+    return false === f.before.equals(f.after)
+  }).map(f => {
+    if (f.before.equals(ID.NULL)) {
+      return {
+        name   : f.name,
+        before : f.before,
+        after  : f.after,
+        status : 'added' as 'added'
+      }
+    } else if (f.after.equals(ID.NULL)) {
+      return {
+        name   : f.name,
+        before : f.before,
+        after  : f.after,
+        status : 'deleted' as 'deleted'
+      }
+    } else {
+      return {
+        name   : f.name,
+        before : f.before,
+        after  : f.after,
+        status : 'modified' as 'modified'
+      }
+    }
+  })
 }
