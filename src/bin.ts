@@ -145,18 +145,18 @@ program
 
 program
   .command('log')
-  .action(() => {
+  .action(errHandler(() => {
     porcelain.log().forEach(commit => {
       console.log(fmt('%s (%s) %s', commit.id(), commit.author(), commit.message()))
     })
-  })
+  }))
 
 program
   .command('diff')
   .arguments('<tree> <tree>')
-  .action((tree1, tree2) => {
+  .action(errHandler((tree1, tree2) => {
     porcelain.diff(new ID(tree1), new ID(tree2))
-  })
+  }))
 
 program.parse(process.argv)
 
