@@ -1,4 +1,5 @@
 import * as mkdirp from 'mkdirp'
+import * as path from 'path'
 import * as plumbing from './plumbing'
 import * as io from './io'
 import * as resolve from './resolve'
@@ -17,6 +18,28 @@ export const init = (): void => {
 export const add = (filepath: string): void => {
   const blob = plumbing.hashObject(filepath, true)
   plumbing.addToIndex(blob, filepath)
+}
+
+export const reset = (filepath: string): void => {
+  filepath = path.normalize(filepath)
+  const ref   = io.readRef('HEAD')
+  const head  = ref.equals(ID.NULL) ? [] : resolve.treeishToFiles(ref)
+  const index = io.readIndex()
+  const found = head.reduce((found, blob) => {
+    if (blob.name === filepath) {
+      return blob.blob
+    } else {
+      return found
+    }
+  }, ID.NULL)
+
+  if (found.equals(ID.NULL)) {
+    index.removeObject(filepath)
+  } else {
+    index.replaceObject(filepath, found)
+  }
+
+  io.writeIndex(index)
 }
 
 export const commit = (author: string, message: string): void => {

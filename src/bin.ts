@@ -118,6 +118,13 @@ program
   }))
 
 program
+  .command('reset')
+  .arguments('<filepath>')
+  .action(errHandler(filepath => {
+    porcelain.reset(filepath)
+  }))
+
+program
   .command('commit')
   .option('--author <author>')
   .option('--message <message>')
