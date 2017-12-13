@@ -22,14 +22,15 @@ export const add = (filepath: string): void => {
 export const commit = (author: string, message: string): void => {
   const tree = plumbing.writeTree('.')
   const parent = io.readRef('HEAD')
-  const parents = (parent === ID.NULL) ? [] : [parent]
+  const parents = parent.equals(ID.NULL) ? [] : [parent]
   const commit = new Commit(tree, parents, author, message)
   io.writeObject(commit)
   io.writeRef('HEAD', commit.id())
 }
 
 export const status = (): resolve.FileDiff[] => {
-  const head    = resolve.treeishToFiles(io.readRef('HEAD'))
+  const ref     = io.readRef('HEAD')
+  const head    = ref.equals(ID.NULL) ? [] : resolve.treeishToFiles(ref)
   const index   = resolve.indexToFiles()
   const staged  = resolve.fileDiffs(head, index)
   return staged
