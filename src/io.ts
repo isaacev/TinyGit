@@ -66,6 +66,10 @@ export const writeIndex = (index: Index): void => {
 }
 
 export const readRef = (name: string): ID => {
+  if (isValidRefName(name) === false) {
+    throw new Error('invalid reference name')
+  }
+
   const refsPath = path.join(getRepoRoot(), 'refs', name)
   if (fs.existsSync(refsPath) === false) {
     return ID.NULL
@@ -76,6 +80,10 @@ export const readRef = (name: string): ID => {
 }
 
 export const writeRef = (name: string, pointer: ID): void => {
+  if (isValidRefName(name) === false) {
+    throw new Error('invalid reference name')
+  }
+
   fs.writeFileSync(path.join(getRepoRoot(), 'refs', name), pointer.whole(), 'utf8')
 }
 
@@ -86,4 +94,53 @@ export const listRefs = (): {name: string, pointer: ID}[] => {
       const raw = fs.readFileSync(path.join(refsPath, filename), 'utf8')
       return {name: filename, pointer: new ID(raw)}
     })
+}
+
+/**
+ * A reference name can not:
+ * 0. Be an empty string
+ * 1. Have a path that begins with "."
+ * 2. Have a double dot ".."
+ * 3. Have an ASCII control character, "~", "^", ":", or SP, anywhere
+ * 4. End with a "/"
+ * 5. End with a ".lock"
+ * 6. Contain a "\"
+ */
+const isValidRefName = (name: string): boolean => {
+  // Handle case #0
+  if (name.length <= 0) {
+    return false
+  }
+
+  // Handle case #1
+  if (/^\./.test(name)) {
+    return false
+  }
+
+  // Handle case #2
+  if (/\.\./.test(name)) {
+    return false
+  }
+
+  // Handle case #3
+  if (/[\u0000-\u0020~^:]/.test(name)) {
+    return false
+  }
+
+  // Handle case #4
+  if (/\/$/.test(name)) {
+    return false
+  }
+
+  // Handle case #5
+  if (/\.lock$/.test(name)) {
+    return false
+  }
+
+  // Handle case #6
+  if (/\\/.test(name)) {
+    return false
+  }
+
+  return true
 }
