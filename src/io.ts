@@ -117,13 +117,8 @@ const isValidRefName = (name: string): boolean => {
     return false
   }
 
-  // Handle case #2
-  if (/\.\./.test(name)) {
-    return false
-  }
-
-  // Handle case #3
-  if (/[\u0000-\u0020~^:]/.test(name)) {
+  // Handle cases #2, #3, #6
+  if (/(\.\.|[\u0000-\u0020~^:]|\\)/.test(name)) {
     return false
   }
 
@@ -134,11 +129,6 @@ const isValidRefName = (name: string): boolean => {
 
   // Handle case #5
   if (/\.lock$/.test(name)) {
-    return false
-  }
-
-  // Handle case #6
-  if (/\\/.test(name)) {
     return false
   }
 
