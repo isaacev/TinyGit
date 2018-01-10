@@ -195,8 +195,8 @@ describe('models', () => {
           {name: 'bar', mode: 'tree', id: new ID(repeat('abcd', 10))},
         ])
         expect(t.encode()).to.equal('tree 98\0'
-          + 'foo\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
-          + 'bar\0tree\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+          + 'bar\0tree\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+          + 'foo\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
       })
     })
 
@@ -207,8 +207,8 @@ describe('models', () => {
           {name: 'bar', mode: 'blob', id: new ID(repeat('abcd', 10))},
         ])
         expect(t.contents()).to.equal(''
-          + 'foo\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
-          + 'bar\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
+          + 'bar\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd'
+          + 'foo\0blob\0abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd')
       })
     })
   })
