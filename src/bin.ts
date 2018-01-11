@@ -97,7 +97,7 @@ program
   .command('show-ref')
   .action(errHandler(() => {
     plumbing.showRef().forEach(ref => {
-      console.log(fmt('%s %s', ref.pointer, ref.name))
+      console.log(fmt('%s %s', ref.pointer(), ref.name()))
     })
   }))
 

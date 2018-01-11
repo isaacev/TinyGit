@@ -8,6 +8,7 @@ import { Index } from './models/index'
 import { Commit } from './models/commit'
 import { Tree } from './models/tree'
 import { Blob } from './models/blob'
+import { Ref } from './models/ref'
 
 export const getRepoRoot = (): string => {
   return path.join(process.cwd(), '.tinygit')
@@ -65,72 +66,48 @@ export const writeIndex = (index: Index): void => {
   fs.writeFileSync(path.join(getRepoRoot(), 'index'), index.encode(), 'utf8')
 }
 
-export const readRef = (name: string): ID => {
-  if (isValidRefName(name) === false) {
+export const readRef = (name: string): Ref => {
+  if (Ref.isLegalName(name) === false) {
     throw new Error('invalid reference name')
   }
 
-  const refsPath = path.join(getRepoRoot(), 'refs', name)
-  if (fs.existsSync(refsPath) === false) {
-    return ID.NULL
+  const ref = new Ref(name)
+  if (fs.existsSync(ref.path())) {
+    const pointer = new ID(fs.readFileSync(ref.path(), 'utf8'))
+    ref.setPointer(pointer)
+    return ref
   } else {
-    const raw = fs.readFileSync(refsPath, 'utf8')
-    return new ID(raw)
+    return ref
   }
 }
 
-export const writeRef = (name: string, pointer: ID): void => {
-  if (isValidRefName(name) === false) {
+export const writeRef = (ref: Ref): void => {
+  if (Ref.isLegalName(ref.name()) === false) {
     throw new Error('invalid reference name')
   }
 
-  fs.writeFileSync(path.join(getRepoRoot(), 'refs', name), pointer.whole(), 'utf8')
+  if (fs.existsSync(ref.path()) === false) {
+    mkdirp.sync(path.dirname(ref.path()))
+  }
+
+  fs.writeFileSync(ref.path(), ref.pointer().whole(), 'utf8')
 }
 
-export const listRefs = (): {name: string, pointer: ID}[] => {
-  const refsPath = path.join(getRepoRoot(), 'refs')
-  return fs.readdirSync(refsPath)
-    .map(filename => {
-      const raw = fs.readFileSync(path.join(refsPath, filename), 'utf8')
-      return {name: filename, pointer: new ID(raw)}
-    })
-}
+export const listRefs = (parent: string = 'refs'): Ref[] => {
+  let refs = [] as Ref[]
 
-/**
- * A reference name can not:
- * 0. Be an empty string
- * 1. Have a path that begins with "."
- * 2. Have a double dot ".."
- * 3. Have an ASCII control character, "~", "^", ":", or SP, anywhere
- * 4. End with a "/"
- * 5. End with a ".lock"
- * 6. Contain a "\"
- */
-const isValidRefName = (name: string): boolean => {
-  // Handle case #0
-  if (name.length <= 0) {
-    return false
-  }
+  fs.readdirSync(path.join(getRepoRoot(), parent)).forEach(child => {
+    const name = path.join(parent, child)
+    const refpath = path.join(getRepoRoot(), name)
+    const stat = fs.statSync(refpath)
 
-  // Handle case #1
-  if (/^\./.test(name)) {
-    return false
-  }
+    if (stat.isDirectory()) {
+      listRefs(name).forEach(ref => refs.push(ref))
+    } else {
+      const pointer = new ID(fs.readFileSync(refpath, 'utf8'))
+      refs.push(new Ref(name.replace(/\\/g, '/'), pointer))
+    }
+  })
 
-  // Handle cases #2, #3, #6
-  if (/(\.\.|[\u0000-\u0020~^:]|\\)/.test(name)) {
-    return false
-  }
-
-  // Handle case #4
-  if (/\/$/.test(name)) {
-    return false
-  }
-
-  // Handle case #5
-  if (/\.lock$/.test(name)) {
-    return false
-  }
-
-  return true
+  return refs
 }

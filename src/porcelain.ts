@@ -8,11 +8,12 @@ import * as diffs from './diff'
 import { ID } from './models/object'
 import { Commit } from './models/commit'
 import { Blob } from './models/blob'
+import { Ref } from './models/ref'
 
 export const init = (): void => {
   mkdirp.sync('.tinygit/objects')
   mkdirp.sync('.tinygit/refs')
-  io.writeRef('HEAD', ID.NULL)
+  io.writeRef(new Ref('refs/HEAD', ID.NULL))
   io.readIndex()
 }
 
@@ -28,7 +29,7 @@ export const add = (filepath: string): void => {
 
 export const reset = (filepath: string): void => {
   filepath = path.normalize(filepath)
-  const ref   = io.readRef('HEAD')
+  const ref   = io.readRef('refs/HEAD').pointer()
   const head  = ref.equals(ID.NULL) ? [] : resolve.treeishToFiles(ref)
   const index = io.readIndex()
   const found = head.reduce((found, blob) => {
@@ -50,15 +51,15 @@ export const reset = (filepath: string): void => {
 
 export const commit = (author: string, message: string): void => {
   const tree = plumbing.writeTree('.')
-  const parent = io.readRef('HEAD')
+  const parent = io.readRef('refs/HEAD').pointer()
   const parents = parent.equals(ID.NULL) ? [] : [parent]
   const commit = new Commit(tree, parents, author, message)
   io.writeObject(commit)
-  io.writeRef('HEAD', commit.id())
+  io.writeRef(new Ref('refs/HEAD', commit.id()))
 }
 
 export const status = (): string => {
-  const ref      = io.readRef('HEAD')
+  const ref      = io.readRef('refs/HEAD').pointer()
   const head     = ref.equals(ID.NULL) ? [] : resolve.treeishToFiles(ref)
   const index    = resolve.indexToFiles()
   const staged   = resolve.fileDiffs(head, index)
@@ -99,7 +100,7 @@ export const status = (): string => {
 
 export const log = (): Commit[] => {
   const log = [] as Commit[]
-  let head = io.readRef('HEAD')
+  let head = io.readRef('refs/HEAD').pointer()
   while (head != null) {
     const commit = io.readObject(head) as Commit
     log.push(commit)
@@ -140,4 +141,10 @@ export const diff = (a: ID, b: ID): void => {
       console.log(d.toString())
     })
   })
+}
+
+export const branch = (name: string): void => {
+  const refname = 'refs/branch/' + name
+  const refpointer = io.readRef('refs/HEAD').pointer()
+  io.writeRef(new Ref(refname, refpointer))
 }

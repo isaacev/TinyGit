@@ -8,6 +8,7 @@ import { ID } from './models/object'
 import { Commit } from './models/commit'
 import { Tree, TreeChild } from './models/tree'
 import { Blob } from './models/blob'
+import { Ref } from './models/ref'
 
 export const hashObject = (filepath: string, write: boolean = false): ID => {
   if (path.isAbsolute(filepath) === false) {
@@ -113,10 +114,10 @@ export const commitTree = (tree: ID, parents: ID[], author: string, message: str
 }
 
 export const updateRef = (name: string, pointer: ID): void => {
-  io.writeRef(name, pointer)
+  io.writeRef(new Ref(name, pointer))
 }
 
-export const showRef = (): {name: string, pointer: ID}[] => {
+export const showRef = (): Ref[] => {
   return io.listRefs()
 }
 
